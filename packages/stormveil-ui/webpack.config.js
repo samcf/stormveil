@@ -19,6 +19,19 @@ module.exports = env => {
         module: {
             rules: [
                 {
+                    test: /\.css$/,
+                    use: [
+                        { loader: "style-loader" },
+                        {
+                            loader: "css-loader",
+                            options: {
+                                modules: true,
+                            }
+                        }
+                    ],
+                    exclude: /node_modules/
+                },
+                {
                     test: /\.tsx?$/,
                     use: "ts-loader",
                     exclude: /node_modules/
@@ -26,7 +39,7 @@ module.exports = env => {
             ]
         },
         resolve: {
-            extensions: [".js", ".ts", ".tsx"]
+            extensions: [".js", ".ts", ".tsx", ".css"]
         },
         output: {
             path: path.resolve(__dirname, "web/script"),
