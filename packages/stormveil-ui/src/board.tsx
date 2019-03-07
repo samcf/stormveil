@@ -3,16 +3,9 @@ import * as Color from "d3-color";
 import * as Scale from "d3-scale";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
-import { IState, Team, Tile } from "stormveil";
-import { candidates, ITile, moves, team, tiles, turn } from "stormveil/lib/shell";
+import { candidates, IState, ITile, moves, Team, team, Tile, tiles, turn } from "stormveil";
 import { Vector } from "./common";
 import { noise } from "./noise";
-
-interface IRenderTileProps {
-    className: string;
-    key: string;
-    style: {};
-}
 
 interface IProps {
     game: IState;
@@ -46,13 +39,12 @@ export default class Board extends React.Component<IProps, {}> {
         this.camera = { a: viewAngle, s: tileSize / 2, z: 16 };
     }
 
-    private faceName = (face: Face): string => {
-        switch (face) {
-            case Face.Left:    return "Left";
-            case Face.Overlay: return "Overlay";
-            case Face.Right:   return "Right";
-            case Face.Top:     return "Top";
-        }
+    private tileVector = (tile: ITile): Vector => {
+        const { a, s, z } = this.camera;
+        return [
+            (tile.x - tile.y) * s,
+            (tile.x + tile.y) * (s - a) - z,
+        ];
     }
 
     private tileColor = (tile: ITile): Color.HSLColor => {
@@ -68,17 +60,12 @@ export default class Board extends React.Component<IProps, {}> {
         return Color.hsl(120, 0.20, s([0.40, 0.45]), 1);
     }
 
-    private faceColor = (tile: ITile) => (face: Face): Color.Color => {
-        const color = this.tileColor(tile);
+    private faceName = (face: Face): string => {
         switch (face) {
-            case Face.Overlay:
-                return Color.rgb(0, 0, 0, 0);
-            case Face.Top:
-                return color;
-            case Face.Left:
-                return color.darker(0.75);
-            case Face.Right:
-                return color.darker(2);
+            case Face.Left:    return "Left";
+            case Face.Overlay: return "Overlay";
+            case Face.Right:   return "Right";
+            case Face.Top:     return "Top";
         }
     }
 
@@ -95,19 +82,25 @@ export default class Board extends React.Component<IProps, {}> {
         }
     }
 
+    private faceColor = (tile: ITile) => (face: Face): Color.Color => {
+        const color = this.tileColor(tile);
+        switch (face) {
+            case Face.Overlay:
+                return Color.rgb(0, 0, 0, 0);
+            case Face.Top:
+                return color;
+            case Face.Left:
+                return color.darker(0.75);
+            case Face.Right:
+                return color.darker(2);
+        }
+    }
+
     private vectorVector = (v: Vector): Vector => {
         const { a, s, z } = this.camera;
         return [
             (v[0] - v[1]) * s,
             (v[0] + v[1]) * (s - a) - z,
-        ];
-    }
-
-    private tileVector = (tile: ITile): Vector => {
-        const { a, s, z } = this.camera;
-        return [
-            (tile.x - tile.y) * s,
-            (tile.x + tile.y) * (s - a) - z,
         ];
     }
 
@@ -172,42 +165,35 @@ export default class Board extends React.Component<IProps, {}> {
         return sx === x && sy === y;
     }
 
-    private renderTile = (props: IRenderTileProps, tile: ITile) => {
-        const color = this.faceColor(tile);
-        const path = this.facePath(tile);
-        return (
-            <g {...props}>
-                <g className={css({
-                    "Board_Tile": true,
-                    "Board_Tile--Selectable": this.isSelectable(tile),
-                    "Board_Tile--Selected": this.isSelected(tile),
-                })}
-                    onClick={() => this.onSelectTile(tile)}>
-                    {[Face.Top, Face.Overlay, Face.Left, Face.Right].map(face => (
-                        <polygon
-                            key={face}
-                            points={path(face).join(", ")}
-                            style={{ fill: color(face).toString() }}
-                            className={css(
-                                `Board_Tile_Face`,
-                                `Board_Tile_Face--${this.faceName(face)}`,
-                            )} />
-                    ))}
-                </g>
-            </g>
-        );
-    }
-
-    private renderTiles = (render: (props: IRenderTileProps, tile: ITile) => JSX.Element) => {
+    private renderTiles = () => {
         return tiles(this.props.game).map(tile => {
             const [ tx, ty ] = this.tileVector(tile);
-            return render({
-                key: [tile.x, tile.y].join(", "),
-                className: "Board_Tile_Container",
-                style: {
-                    transform: `translate(${tx}px, ${ty}px)`,
-                },
-            }, tile);
+            const color = this.faceColor(tile);
+            const path = this.facePath(tile);
+            return (
+                <g
+                    key={[tile.x, tile.y].join(", ")}
+                    style={{ transform: `translate(${tx}px, ${ty}px)` }}>
+                    <g
+                        onClick={() => this.onSelectTile(tile)}
+                        className={css({
+                            "Board_Tile": true,
+                            "Board_Tile--Selectable": this.isSelectable(tile),
+                            "Board_Tile--Selected": this.isSelected(tile),
+                        })}>
+                        {[Face.Top, Face.Overlay, Face.Left, Face.Right].map(face => (
+                            <polygon
+                                key={face}
+                                points={path(face).join(", ")}
+                                style={{ fill: color(face).toString() }}
+                                className={css(
+                                    `Board_Tile_Face`,
+                                    `Board_Tile_Face--${this.faceName(face)}`,
+                                )} />
+                        ))}
+                    </g>
+                </g>
+            );
         });
     }
 
@@ -250,20 +236,33 @@ export default class Board extends React.Component<IProps, {}> {
     }
 
     private renderTileContents = () => {
-        const { isStarted } = this.props;
+        const { game, isStarted } = this.props;
         return (
             <CSSTransition in appear classNames="Dropdown" timeout={250}>
                 <g className="Board_Pieces Dropdown">
-                    {this.renderTiles((props, tile) => (
-                        <g {...props}>
-                            <g className={css({
-                                "Board_Tile_Content": true,
-                                "Board_Tile_Content--Ready": !isStarted && team(tile.t) === this.props.team,
-                            })}>
-                                {this.renderTileContent(tile)}
+                    {tiles(game).slice().sort((a, b) => a.k - b.k).map(tile => {
+                        if (tile.t & (Tile.Empt | Tile.None)) {
+                            return null;
+                        }
+
+                        const [ tx, ty ] = this.tileVector(tile);
+                        return (
+                            <g
+                                key={tile.k}
+                                style={{ transform: `translate(${tx}px, ${ty}px)` }}
+                                className={css({
+                                    "Board_Tile_Container": true,
+                                    "Board_Tile_Container--Content": true,
+                                })}>
+                                <g className={css({
+                                    "Board_Tile_Content": true,
+                                    "Board_Tile_Content--Ready": !isStarted && team(tile.t) === this.props.team,
+                                })}>
+                                    {this.renderTileContent(tile)}
+                                </g>
                             </g>
-                        </g>
-                    ))}
+                        );
+                    })}
                 </g>
             </CSSTransition>
         );
@@ -279,7 +278,7 @@ export default class Board extends React.Component<IProps, {}> {
                 </defs>
                 <g transform="translate(352, 37)">
                     <g className="Board_Tiles">
-                        {this.renderTiles(this.renderTile)}
+                        {this.renderTiles()}
                     </g>
                     {this.renderLastMove()}
                     {this.renderTileContents()}

@@ -12,7 +12,8 @@
         "jsx": "react",
         "lib": [
             "dom",
-            "es5"
+            "es5",
+            "es2015"
         ],
         "plugins": [
             { "name": "typescript-tslint-plugin" }

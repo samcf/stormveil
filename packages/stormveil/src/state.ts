@@ -1,5 +1,6 @@
 import { Team } from "./team";
 import { Tile } from "./tile";
+import { KeySet } from "./types/keys";
 import { Vector } from "./types/vector";
 
 const enum Mask {
@@ -21,6 +22,7 @@ interface ISimpleState {
 export interface IState extends ISimpleState {
     history: Array<[Vector, Vector]>;
     initial: ISimpleState;
+    keys: KeySet;
 }
 
 const offsets: number[] = [0, -1, 1, 0, 0, 1, -1, 0];
@@ -271,11 +273,26 @@ export function moves(s: IBoard, [ax, ay]: Vector): Vector[] {
     return m;
 }
 
+function deriveNextKeys(state: IState, [ ax, ay ]: Vector, [ bx, by ]: Vector): KeySet {
+    const { board: { width }, keys: { last, values } } = state;
+    const latest = last + 1;
+    const prev = key(width, ax, ay);
+    const next = key(width, bx, by);
+    const keys = values.slice();
+    keys[next] = keys[prev];
+    keys[prev] = latest;
+    return {
+        last: latest,
+        values: keys,
+    };
+}
+
 export function play(s: IState, a: Vector, b: Vector): IState {
     return {
         board: resolve(s.board, a, b),
         history: s.history.concat([[a, b]]),
         turn: opponent(s.turn),
+        keys: deriveNextKeys(s, a, b),
         initial: s.initial,
     };
 }

@@ -37,6 +37,10 @@ h1 {
     font-size: 48px;
 }
 
+.Board_Tile_Container--Content {
+    transition: transform 500ms ease;
+}
+
 .Board_Tile_Face, use[href="#flag"] {
     shape-rendering: crispEdges;
 }

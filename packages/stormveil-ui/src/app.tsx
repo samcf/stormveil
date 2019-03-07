@@ -1,9 +1,8 @@
 import css from "classnames";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
-import { createNew, IState, play, Team } from "stormveil";
+import { best, createNew, IState, play, Team } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
-import { best } from "stormveil/lib/shell";
 import Board from "./board";
 import { Vector } from "./common";
 
@@ -65,7 +64,7 @@ export default class App extends React.Component<{}, IComponentState> {
             const opponent = oppose(Team.Attackers, Team.Defenders, team);
             const [ ba, bb ] = best(next.board, opponent, 3);
             this.setState({ game: play(next, ba, bb) });
-        }, 250);
+        }, 750);
     }
 
     private renderBoard = () => {
@@ -118,6 +117,7 @@ export default class App extends React.Component<{}, IComponentState> {
                             <div className="MainMenuOptionContent TeamButtons">
                                 {[Team.Attackers, Team.Defenders].map(t => (
                                     <div
+                                        key={t}
                                         className={css({
                                             "Button": true,
                                             "ButtonTeam": true,
