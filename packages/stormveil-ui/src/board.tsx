@@ -4,6 +4,7 @@ import * as Scale from "d3-scale";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
 import { candidates, IState, ITile, moves, Team, team, Tile, tiles, turn } from "stormveil";
+import styles from "./board.css";
 import { Vector } from "./common";
 import { noise } from "./noise";
 
@@ -18,11 +19,39 @@ interface IProps {
     viewAngle?: number;
 }
 
+function Piece(props: { tile: ITile }) {
+    switch (props.tile.t) {
+        case Tile.Attk:
+            return ( <use href="#sword" transform="translate(-8, -24)" /> );
+        case Tile.Defn:
+            return ( <use href="#shield" transform="translate(-12, -12)" style={{ fill: "white" }} /> );
+        case Tile.Thrn:
+            return ( <use href="#throne" transform="translate(-12, -16)" style={{ fill: "white" }} /> );
+        case Tile.Refu:
+            return ( <use href="#flag" transform="translate(-6, -20)" /> );
+        case Tile.King:
+        case Tile.Cast:
+        case Tile.Sanc:
+            return ( <use href="#king" transform="translate(-15, -20)" style={{ fill: "white" }} /> );
+        default:
+            return null;
+    }
+}
+
 const enum Face {
     Overlay,
     Top,
     Left,
     Right,
+}
+
+function faceName(face: Face): string {
+    switch (face) {
+        case Face.Left:    return "Left";
+        case Face.Overlay: return "Overlay";
+        case Face.Right:   return "Right";
+        case Face.Top:     return "Top";
+    }
 }
 
 export default class Board extends React.Component<IProps, {}> {
@@ -62,15 +91,6 @@ export default class Board extends React.Component<IProps, {}> {
         }
 
         return Color.hsl(120, 0.20, s([0.40, 0.45]), 1);
-    }
-
-    private faceName = (face: Face): string => {
-        switch (face) {
-            case Face.Left:    return "Left";
-            case Face.Overlay: return "Overlay";
-            case Face.Right:   return "Right";
-            case Face.Top:     return "Top";
-        }
     }
 
     private facePath = (_: ITile) => (face: Face) => {
@@ -160,8 +180,8 @@ export default class Board extends React.Component<IProps, {}> {
         return sx === x && sy === y;
     }
 
-    private renderTiles = () => {
-        return tiles(this.props.game).map(tile => {
+    private renderTiles = () =>
+        tiles(this.props.game).map(tile => {
             const [ tx, ty ] = this.positionByTile(tile);
             const color = this.faceColor(tile);
             const path = this.facePath(tile);
@@ -172,25 +192,22 @@ export default class Board extends React.Component<IProps, {}> {
                     <g
                         onClick={() => this.onSelectTile(tile)}
                         className={css({
-                            "Board_Tile": true,
-                            "Board_Tile--Selectable": this.isSelectable(tile),
-                            "Board_Tile--Selected": this.isSelected(tile),
+                            [styles.tileSelectable]: this.isSelectable(tile),
                         })}>
                         {[Face.Top, Face.Overlay, Face.Left, Face.Right].map(face => (
                             <polygon
                                 key={face}
                                 points={path(face).join(", ")}
                                 style={{ fill: color(face).toString() }}
-                                className={css(
-                                    `Board_Tile_Face`,
-                                    `Board_Tile_Face--${this.faceName(face)}`,
-                                )} />
+                                className={css({
+                                    [styles.tileFace]: true,
+                                    [styles["tileFace" + faceName(face)]]: true,
+                                })} />
                         ))}
                     </g>
                 </g>
             );
-        });
-    }
+        })
 
     private renderLastMove = () => {
         const { game, team } = this.props;
@@ -204,7 +221,7 @@ export default class Board extends React.Component<IProps, {}> {
         const [ bx, by ] = this.positionByVector(b);
         return (
             <line
-                className="Board_Marker_Move"
+                className={styles.moveMarker}
                 x1={ax}
                 y1={ay}
                 x2={bx}
@@ -213,74 +230,67 @@ export default class Board extends React.Component<IProps, {}> {
         );
     }
 
-    private renderTileContent = (tile: ITile) => {
-        switch (tile.t) {
-            case Tile.Attk:
-                return ( <use href="#sword" transform="translate(-8, -24)" /> );
-            case Tile.Defn:
-                return ( <use href="#shield" transform="translate(-12, -12)" style={{ fill: "white" }} /> );
-            case Tile.Thrn:
-                return ( <use href="#throne" transform="translate(-12, -16)" style={{ fill: "white" }} /> );
-            case Tile.Refu:
-                return ( <use href="#flag" transform="translate(-6, -20)" /> );
-            case Tile.King:
-            case Tile.Cast:
-            case Tile.Sanc:
-                return ( <use href="#king" transform="translate(-15, -20)" style={{ fill: "white" }} /> );
-            default:
-                return null;
-        }
-    }
+    private renderTileContents = () => (
+        <g className={styles.piecesGroup}>
+            {tiles(this.props.game).slice().sort((a, b) => a.k - b.k).map(tile => {
+                if (tile.t & (Tile.Empt | Tile.None)) {
+                    return null;
+                }
 
-    private renderTileContents = () => {
-        const { game, isStarted } = this.props;
-        return (
-            <CSSTransition in appear classNames="Dropdown" timeout={250}>
-                <g className="Board_Pieces Dropdown">
-                    {tiles(game).slice().sort((a, b) => a.k - b.k).map(tile => {
-                        if (tile.t & (Tile.Empt | Tile.None)) {
-                            return null;
-                        }
-
-                        const [ tx, ty ] = this.positionByTile(tile);
-                        return (
-                            <g
-                                key={tile.k}
-                                style={{ transform: `translate(${tx}px, ${ty}px)` }}
-                                className={css({
-                                    "Board_Tile_Container": true,
-                                    "Board_Tile_Container--Content": true,
-                                })}>
-                                <g className={css({
-                                    "Board_Tile_Content": true,
-                                    "Board_Tile_Content--Ready": !isStarted && team(tile.t) === this.props.team,
-                                })}>
-                                    {this.renderTileContent(tile)}
-                                </g>
-                            </g>
-                        );
-                    })}
-                </g>
-            </CSSTransition>
-        );
-    }
+                const [ tx, ty ] = this.positionByTile(tile);
+                return (
+                    <g
+                        key={tile.k}
+                        style={{ transform: `translate(${tx}px, ${ty}px)` }}
+                        className={styles.pieceGroup}>
+                        <g className={css({
+                            [styles.piece]: true,
+                            [styles.pieceReady]: !this.props.isStarted && team(tile.t) === this.props.team,
+                        })}>
+                            <Piece tile={tile} />
+                        </g>
+                    </g>
+                );
+            })}
+        </g>
+    )
 
     public render() {
         return (
-            <svg className="Match_Board" width="704" height="456">
-                <defs>
-                    <marker id="moveMarkerHead" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">
-                        <path d="M0,0 V4 L2,2 Z" style={{ fill: "rgba(255, 0, 0, 0.4)" }} />
-                    </marker>
-                </defs>
-                <g transform="translate(352, 37)">
-                    <g className="Board_Tiles">
-                        {this.renderTiles()}
+            <CSSTransition
+                in
+                appear
+                timeout={500}
+                classNames={{
+                    appear: styles.boardAppear,
+                    appearActive: styles.boardAppearActive,
+                    enterDone: styles.boardEnterDone,
+                }}>
+                <svg className={styles.board} width="704" height="456">
+                    <defs>
+                        <marker id="moveMarkerHead" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">
+                            <path d="M0,0 V4 L2,2 Z" style={{ fill: "rgba(255, 0, 0, 0.4)" }} />
+                        </marker>
+                    </defs>
+                    <g transform="translate(352, 37)">
+                        <g>
+                            {this.renderTiles()}
+                        </g>
+                        {this.renderLastMove()}
+                        <CSSTransition
+                            in
+                            appear
+                            timeout={250}
+                            classNames={{
+                                appear: styles.piecesGroupAppear,
+                                appearActive: styles.piecesGroupAppearActive,
+                                enterDone: styles.piecesGroupEnterDone,
+                            }}>
+                            {this.renderTileContents()}
+                        </CSSTransition>
                     </g>
-                    {this.renderLastMove()}
-                    {this.renderTileContents()}
-                </g>
-            </svg>
+                </svg>
+            </CSSTransition>
         );
     }
 }

@@ -1,0 +1,55 @@
+.appView,
+.appViewPanel,
+.appViewBoard {
+    min-height: 100vh;
+}
+
+.appView {
+    display: flex;
+}
+
+.appViewContent {
+    padding: 16px 24px;
+}
+
+.appViewTitle {
+    font-size: 36px;
+    margin-bottom: 24px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.appViewPanel {
+    background-color: rgb(255, 255, 252);
+    border-right: 1px dotted rgba(0, 0, 0, 0.10);
+    width: 480px;
+}
+
+.appViewBoard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 auto;
+}
+
+.option + .option {
+    margin-top: 36px;
+}
+
+.heading {
+    border-bottom: 1px dashed rgb(220, 220, 220);
+    margin-bottom: 16px;
+}
+
+.content {
+    font-size: 14px;
+}
+
+.content + .content {
+    margin-top: 8px;
+}
+
+.buttons {
+    composes: content;
+    display: flex;
+    height: 40px;
+}

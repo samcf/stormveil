@@ -1,0 +1,82 @@
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-8px); }
+}
+
+@keyframes dash {
+    from { stroke-dashoffset: 140; }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes pulse {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.tileSelectable {
+    cursor: pointer;
+}
+
+.tileSelectable .tileFaceOverlay:hover {
+    fill: rgba(255, 255, 255, 0.10) !important;
+}
+
+.tileFace {
+    shape-rendering: crispEdges;
+}
+
+.tileFaceOverlay {
+    transition: fill 75ms ease;
+    shape-rendering: geometricPrecision;
+}
+
+.tileSelectable .tileFaceOverlay {
+    animation: dash 4s linear infinite;
+    stroke-dasharray: 8;
+    stroke-width: 1px;
+    stroke: rgba(255, 255, 255, 1);
+}
+
+.pieceGroup {
+    transition: transform 500ms ease;
+}
+
+.piece {
+    pointer-events: none;
+}
+
+.pieceReady {
+    animation: bounce 500ms ease 0ms infinite alternate;
+}
+
+.moveMarker {
+    stroke: rgba(255, 0, 0, 0.4);
+    stroke-width: 3px;
+    animation: pulse 500ms ease 0ms infinite alternate;
+}
+
+.piecesGroup {
+    transition: transform 750ms ease;
+}
+
+.piecesGroupAppear {
+    transform: translateY(-756px);
+}
+
+.piecesGroupAppearActive,
+.piecesGroupEnterDone {
+    transform: translateY(0);
+}
+
+.board {
+    transition: opacity 500ms ease-in;
+}
+
+.boardAppear {
+    opacity: 0;
+}
+
+.boardAppearActive,
+.boardEnterDone {
+    opacity: 1;
+}

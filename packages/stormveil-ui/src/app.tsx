@@ -1,9 +1,10 @@
 import css from "classnames";
 import React from "react";
-import { CSSTransition } from "react-transition-group";
 import { best, createNew, IState, play, Team } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
+import appStyles from "./app.css";
 import Board from "./board";
+import buttonStyles from "./button.css";
 import { Vector } from "./common";
 
 interface IComponentState {
@@ -109,19 +110,19 @@ export default class App extends React.Component<{}, IComponentState> {
     private renderMenu = () => {
         const { team, started } = this.state;
         return (
-            <div className="MainMenu">
-                <div className="MainMenuOptions">
+            <div className={appStyles.menu}>
+                <div className={appStyles.options}>
                     {!started && (
-                        <div className="MainMenuOption">
-                            <div className="MainMenuOptionTitle">New game</div>
-                            <div className="MainMenuOptionContent TeamButtons">
+                        <div className={appStyles.option}>
+                            <div className={appStyles.heading}>New game</div>
+                            <div className={appStyles.buttons}>
                                 {[Team.Attackers, Team.Defenders].map(t => (
                                     <div
                                         key={t}
                                         className={css({
-                                            "Button": true,
-                                            "ButtonTeam": true,
-                                            "ButtonSelected": team === t,
+                                            [buttonStyles.button]: true,
+                                            [buttonStyles.buttonTeam]: true,
+                                            [buttonStyles.buttonSelected]: team === t,
                                         })}
                                         onClick={() => this.onSelectTeam(t)}
                                         title={teamName(t)}>
@@ -129,38 +130,38 @@ export default class App extends React.Component<{}, IComponentState> {
                                     </div>
                                 ))}
                                 <div
-                                    className="Button ButtonStart"
+                                    className={css(buttonStyles.button, buttonStyles.buttonStart)}
                                     onClick={() => this.onStartNew()}>
                                     Start new game
                                 </div>
                             </div>
                         </div>
                     )}
-                    <div className="MainMenuOption">
-                        <div className="MainMenuOptionTitle">How to play?</div>
-                        <div className="MainMenuOptionContent">
+                    <div className={appStyles.option}>
+                        <div className={appStyles.heading}>How to play?</div>
+                        <div className={appStyles.content}>
                             The objective of the <em>Defenders</em> is to move
                             the <em>King</em> to one of the escape tiles,
                             marked by red flags.
                         </div>
-                        <div className="MainMenuOptionContent">
+                        <div className={appStyles.content}>
                             The objective of the <em>Attackers</em> is to capture
                             the <em>King</em> by surrounding it on all four sides with
                             attackers.
                         </div>
-                        <div className="MainMenuOptionContent">
+                        <div className={appStyles.content}>
                             All pieces may move in any of the four directions
                             (North, East, West, and South) any distance, but
                             may not move over other pieces.
                         </div>
-                        <div className="MainMenuOptionContent">
+                        <div className={appStyles.content}>
                             To capture an <em>Attacker</em> or <em>Defender</em>, it must
                             be sandwiched between two pieces of the opposing team.
                         </div>
                     </div>
-                    <div className="MainMenuOption">
-                        <div className="MainMenuOptionTitle">About</div>
-                        <div className="MainMenuOptionContent">
+                    <div className={appStyles.option}>
+                        <div className={appStyles.heading}>About</div>
+                        <div className={appStyles.content}>
                             Stormveil is an implementation of an old Nordic
                             board game called Tafl. Visit
                             the <a href="https://en.wikipedia.org/wiki/Tafl_games">Wikiepdia page</a> for
@@ -174,20 +175,16 @@ export default class App extends React.Component<{}, IComponentState> {
 
     public render() {
         return (
-            <div className="AppView">
-                <div className="AppViewPanel">
-                    <div className="AppViewContent">
-                        <div className="AppViewTitle">Stormveil</div>
+            <div className={appStyles.appView}>
+                <div className={appStyles.appViewPanel}>
+                    <div className={appStyles.appViewContent}>
+                        <div className={appStyles.appViewTitle}>Stormveil</div>
                         {this.renderMenu()}
                     </div>
                 </div>
-                <div className="AppViewBoard">
-                    <div className="AppViewContent">
-                        <CSSTransition in appear timeout={500} classNames="TransitionFadeIn">
-                            <div className="TransitionFadeIn">
-                                {this.renderBoard()}
-                            </div>
-                        </CSSTransition>
+                <div className={appStyles.appViewBoard}>
+                    <div className={appStyles.appViewContent}>
+                        {this.renderBoard()}
                     </div>
                 </div>
             </div>
