@@ -39,12 +39,16 @@ export default class Board extends React.Component<IProps, {}> {
         this.camera = { a: viewAngle, s: tileSize / 2, z: 16 };
     }
 
-    private tileVector = (tile: ITile): Vector => {
+    private positionByVector = ([ x, y ]: Vector): Vector => {
         const { a, s, z } = this.camera;
         return [
-            (tile.x - tile.y) * s,
-            (tile.x + tile.y) * (s - a) - z,
+            (x - y) * s,
+            (x + y) * (s - a) - z,
         ];
+    }
+
+    private positionByTile = ({ x, y }: ITile): Vector => {
+        return this.positionByVector([ x, y ]);
     }
 
     private tileColor = (tile: ITile): Color.HSLColor => {
@@ -96,14 +100,6 @@ export default class Board extends React.Component<IProps, {}> {
         }
     }
 
-    private vectorVector = (v: Vector): Vector => {
-        const { a, s, z } = this.camera;
-        return [
-            (v[0] - v[1]) * s,
-            (v[0] + v[1]) * (s - a) - z,
-        ];
-    }
-
     private onSelectTile = (tile: ITile): void => {
         const { x, y } = tile;
         if (!this.isSelectable(tile)) {
@@ -124,8 +120,7 @@ export default class Board extends React.Component<IProps, {}> {
         this.props.onMove(selected, [x, y]);
     }
 
-    private isStartingTile = (tile: ITile): boolean =>
-        tile.i !== Tile.Empt
+    private isStartingTile = (tile: ITile): boolean => tile.i !== Tile.Empt;
 
     private isSelectable = (tile: ITile): boolean => {
         const { isStarted } = this.props;
@@ -167,7 +162,7 @@ export default class Board extends React.Component<IProps, {}> {
 
     private renderTiles = () => {
         return tiles(this.props.game).map(tile => {
-            const [ tx, ty ] = this.tileVector(tile);
+            const [ tx, ty ] = this.positionByTile(tile);
             const color = this.faceColor(tile);
             const path = this.facePath(tile);
             return (
@@ -199,21 +194,23 @@ export default class Board extends React.Component<IProps, {}> {
 
     private renderLastMove = () => {
         const { game, team } = this.props;
-        const lastMove = game.history[game.history.length - 1];
-        if (turn(game) === team && lastMove) {
-            const [ ax, ay ] = this.vectorVector(lastMove[0]);
-            const [ bx, by ] = this.vectorVector(lastMove[1]);
-            return (
-                <line className="Board_Marker_Move"
-                    x1={ax}
-                    y1={ay}
-                    x2={bx}
-                    y2={by}
-                    markerEnd="url(#moveMarkerHead)" />
-            );
+        const last = game.history[game.history.length - 1];
+        if (last === undefined || turn(game) !== team) {
+            return null;
         }
 
-        return null;
+        const [ a, b ] = last;
+        const [ ax, ay ] = this.positionByVector(a);
+        const [ bx, by ] = this.positionByVector(b);
+        return (
+            <line
+                className="Board_Marker_Move"
+                x1={ax}
+                y1={ay}
+                x2={bx}
+                y2={by}
+                markerEnd="url(#moveMarkerHead)" />
+        );
     }
 
     private renderTileContent = (tile: ITile) => {
@@ -245,7 +242,7 @@ export default class Board extends React.Component<IProps, {}> {
                             return null;
                         }
 
-                        const [ tx, ty ] = this.tileVector(tile);
+                        const [ tx, ty ] = this.positionByTile(tile);
                         return (
                             <g
                                 key={tile.k}
