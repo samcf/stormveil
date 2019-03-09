@@ -5,7 +5,7 @@ import React from "react";
 import { CSSTransition } from "react-transition-group";
 import { candidates, IState, ITile, moves, Team, team, Tile, tiles, turn } from "stormveil";
 import styles from "./board.css";
-import { Vector } from "./common";
+import { groupBy, Vector } from "./common";
 import { noise } from "./noise";
 
 interface IProps {
@@ -230,67 +230,58 @@ export default class Board extends React.Component<IProps, {}> {
         );
     }
 
-    private renderTileContents = () => (
-        <g className={styles.piecesGroup}>
-            {tiles(this.props.game).slice().sort((a, b) => a.k - b.k).map(tile => {
-                if (tile.t & (Tile.Empt | Tile.None)) {
-                    return null;
-                }
+    private renderTileContents = () => {
+        const { game, isStarted, team: playing } = this.props;
+        const groups = groupBy(tiles(game), tile => team(tile.t));
+        return Object.keys(groups).map(type => (
+            <g key={type} className={css({ [styles.bounce]: !isStarted && Number(type) === playing })}>
+                {groups[type].slice().sort((a, b) => a.k - b.k).map(tile => {
+                    if (tile.t & (Tile.Empt | Tile.None)) {
+                        return null;
+                    }
 
-                const [ tx, ty ] = this.positionByTile(tile);
-                return (
-                    <g
-                        key={tile.k}
-                        style={{ transform: `translate(${tx}px, ${ty}px)` }}
-                        className={styles.pieceGroup}>
-                        <g className={css({
-                            [styles.piece]: true,
-                            [styles.pieceReady]: !this.props.isStarted && team(tile.t) === this.props.team,
-                        })}>
+                    const [ tx, ty ] = this.positionByTile(tile);
+                    return (
+                        <g
+                            key={tile.k}
+                            style={{ transform: `translate(${tx}px, ${ty}px)` }}
+                            className={styles.pieceGroup}>
                             <Piece tile={tile} />
                         </g>
-                    </g>
-                );
-            })}
-        </g>
-    )
+                    );
+                })}
+            </g>
+        ));
+    }
 
     public render() {
         return (
-            <CSSTransition
-                in
-                appear
-                timeout={500}
-                classNames={{
-                    appear: styles.boardAppear,
-                    appearActive: styles.boardAppearActive,
-                    enterDone: styles.boardEnterDone,
-                }}>
-                <svg className={styles.board} width="704" height="456">
-                    <defs>
-                        <marker id="moveMarkerHead" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">
-                            <path d="M0,0 V4 L2,2 Z" style={{ fill: "rgba(255, 0, 0, 0.4)" }} />
-                        </marker>
-                    </defs>
-                    <g transform="translate(352, 37)">
-                        <g>
-                            {this.renderTiles()}
-                        </g>
-                        {this.renderLastMove()}
-                        <CSSTransition
-                            in
-                            appear
-                            timeout={250}
-                            classNames={{
-                                appear: styles.piecesGroupAppear,
-                                appearActive: styles.piecesGroupAppearActive,
-                                enterDone: styles.piecesGroupEnterDone,
-                            }}>
-                            {this.renderTileContents()}
-                        </CSSTransition>
+            <svg width="704" height="456">
+                <defs>
+                    <marker id="moveMarkerHead" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">
+                        <path d="M0,0 V4 L2,2 Z" style={{ fill: "rgba(255, 0, 0, 0.4)" }} />
+                    </marker>
+                </defs>
+                <g transform="translate(352, 37)">
+                    <g>
+                        {this.renderTiles()}
                     </g>
-                </svg>
-            </CSSTransition>
+                    {this.renderLastMove()}
+                    <CSSTransition
+                        in
+                        appear
+                        timeout={250}
+                        classNames={{
+                            appear: styles.piecesGroupAppear,
+                            appearActive: styles.piecesGroupAppearActive,
+                            enterDone: styles.piecesGroupEnterDone,
+                        }}>
+                        <g className={styles.piecesGroup}>
+                            {this.renderTileContents()}
+                        </g>
+                    </CSSTransition>
+                </g>
+            </svg>
         );
     }
 }

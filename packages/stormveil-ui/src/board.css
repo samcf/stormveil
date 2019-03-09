@@ -1,6 +1,7 @@
 @keyframes bounce {
-    from { transform: translateY(0); }
-    to { transform: translateY(-8px); }
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
 }
 
 @keyframes dash {
@@ -45,10 +46,6 @@
     pointer-events: none;
 }
 
-.pieceReady {
-    animation: bounce 500ms ease 0ms infinite alternate;
-}
-
 .moveMarker {
     stroke: rgba(255, 0, 0, 0.4);
     stroke-width: 3px;
@@ -68,15 +65,9 @@
     transform: translateY(0);
 }
 
-.board {
-    transition: opacity 500ms ease-in;
-}
-
-.boardAppear {
-    opacity: 0;
-}
-
-.boardAppearActive,
-.boardEnterDone {
-    opacity: 1;
+.bounce {
+    animation-name: bounce;
+    animation-delay: 750ms;
+    animation-iteration-count: 3;
+    animation-duration: 750ms;
 }
