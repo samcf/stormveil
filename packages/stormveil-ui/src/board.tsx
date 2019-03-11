@@ -22,17 +22,17 @@ interface IProps {
 function Piece(props: { tile: ITile }) {
     switch (props.tile.t) {
         case Tile.Attk:
-            return ( <use href="#sword" transform="translate(-8, -24)" /> );
+            return ( <use transform="translate(-16, -28)" href="#sword" /> );
         case Tile.Defn:
-            return ( <use href="#shield" transform="translate(-12, -12)" style={{ fill: "white" }} /> );
+            return ( <use transform="translate(-18, -16)" href="#shield" style={{ fill: "white" }} /> );
         case Tile.Thrn:
-            return ( <use href="#throne" transform="translate(-12, -16)" style={{ fill: "white" }} /> );
+            return ( <use transform="translate(-16, -16)" href="#throne" style={{ fill: "white" }} /> );
         case Tile.Refu:
-            return ( <use href="#flag" transform="translate(-6, -20)" /> );
+            return ( <use transform="translate(-16, -16)" href="#flag" /> );
         case Tile.King:
         case Tile.Cast:
         case Tile.Sanc:
-            return ( <use href="#king" transform="translate(-15, -20)" style={{ fill: "white" }} /> );
+            return ( <use transform="translate(-18, -16)" href="#king" style={{ fill: "white" }} /> );
         default:
             return null;
     }
@@ -97,26 +97,19 @@ export default class Board extends React.Component<IProps, {}> {
         const { a, s, z } = this.camera;
         switch (face) {
             case Face.Overlay:
-            case Face.Top:
-                return [0, -s + a, s, 0, 0, s - a, -s, 0];
-            case Face.Left:
-                return [-s, 0, -s, z, 0, (s - a) + z, 0, (s - a)];
-            case Face.Right:
-                return [s, 0, s, z, 0, (s - a) + z, 0, (s - a)];
+            case Face.Top:      return [ 0, -s + a,  s, 0, 0,       s - a, -s,       0];
+            case Face.Left:     return [-s,      0, -s, z, 0, (s - a) + z,  0, (s - a)];
+            case Face.Right:    return [ s,      0,  s, z, 0, (s - a) + z,  0, (s - a)];
         }
     }
 
     private faceColor = (tile: ITile) => (face: Face): Color.Color => {
         const color = this.tileColor(tile);
         switch (face) {
-            case Face.Overlay:
-                return Color.rgb(0, 0, 0, 0);
-            case Face.Top:
-                return color;
-            case Face.Left:
-                return color.darker(0.75);
-            case Face.Right:
-                return color.darker(2);
+            case Face.Overlay:  return Color.rgb(0, 0, 0, 0);
+            case Face.Top:      return color;
+            case Face.Left:     return color.darker(0.75);
+            case Face.Right:    return color.darker(2);
         }
     }
 
@@ -246,7 +239,9 @@ export default class Board extends React.Component<IProps, {}> {
                             key={tile.k}
                             style={{ transform: `translate(${tx}px, ${ty}px)` }}
                             className={styles.pieceGroup}>
-                            <Piece tile={tile} />
+                            <svg viewBox="0 0 32 32" width="28" height="28" style={{ overflow: "visible" }}>
+                                <Piece tile={tile} />
+                            </svg>
                         </g>
                     );
                 })}

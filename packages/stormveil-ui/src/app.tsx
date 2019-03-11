@@ -1,7 +1,8 @@
 import css from "classnames";
 import React from "react";
-import { best, createNew, IState, play, Team } from "stormveil";
+import { best, captured, createNew, IState, play, Team } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
+import { opponent } from "stormveil/lib/state";
 import appStyles from "./app.css";
 import Board from "./board";
 import buttonStyles from "./button.css";
@@ -12,14 +13,6 @@ interface IComponentState {
     selected: Vector | null;
     started: boolean;
     team: Team;
-}
-
-function oppose<T>(a: T, b: T, v: T) {
-    if (v === a) {
-        return b;
-    }
-
-    return a;
 }
 
 function teamName(team: Team): string {
@@ -42,6 +35,11 @@ export default class App extends React.Component<{}, IComponentState> {
     };
 
     private onStartNew = () => {
+        const { started } = this.state;
+        if (started) {
+            return;
+        }
+
         const { team } = this.state;
         this.setState({
             game: createNew({ board: hnefatafl, start: team }),
@@ -50,6 +48,10 @@ export default class App extends React.Component<{}, IComponentState> {
     }
 
     private onSelectTeam = (team: Team) => {
+        if (this.state.started) {
+            return;
+        }
+
         this.setState({ team: team });
     }
 
@@ -62,8 +64,8 @@ export default class App extends React.Component<{}, IComponentState> {
         const next = play(game, a, b);
         this.setState({ game: next, selected: null });
         window.setTimeout(() => {
-            const opponent = oppose(Team.Attackers, Team.Defenders, team);
-            const [ ba, bb ] = best(next.board, opponent, 3);
+            const enemy = opponent(team);
+            const [ ba, bb ] = best(next.board, enemy, 3);
             this.setState({ game: play(next, ba, bb) });
         }, 750);
     }
@@ -88,17 +90,61 @@ export default class App extends React.Component<{}, IComponentState> {
         );
     }
 
+    private renderScoreIcon = (team: Team) => {
+        switch (team) {
+            case Team.Attackers:
+                return <use href="#sword" transform="rotate(45) translate(8, -16)" />;
+            case Team.Defenders:
+                return <use href="#shield" />;
+            default:
+                return null;
+        }
+    }
+
+    private renderScore = (team: Team) => {
+        const { game } = this.state;
+        const captures = captured(game, opponent(team));
+        if (captures === 0) {
+            return (
+                <div className={appStyles.scoreNone}>None</div>
+            );
+        }
+
+        return Array.from({ length:  captures }).map((_, i) => (
+            <svg key={i}
+                className={appStyles.scoreIcon}
+                viewBox="4 0 32 32"
+                width="28"
+                height="28">
+                {this.renderScoreIcon(opponent(team))}
+            </svg>
+        ));
+    }
+
+    private renderScoreBoard = () => (
+        <div className={appStyles.score}>
+            {[Team.Attackers, Team.Defenders].map(team => (
+                <div key={team} className={appStyles.scoreTeam}>
+                    <div>{teamName(team)}</div>
+                    <div className={appStyles.scoreIcons}>
+                        {this.renderScore(team)}
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+
     private renderTeamButton = (team: Team) => {
         switch (team) {
             case Team.Attackers:
                 return (
-                    <svg width={14} height={32} transform="scale(0.88) rotate(45)">
-                        <use href="#sword" />
+                    <svg viewBox="0 0 32 32" width="24" height="24">
+                        <use href="#sword" transform="rotate(45) translate(8, -16)" />
                     </svg>
                 );
             case Team.Defenders:
                 return (
-                    <svg width={22} height={24}>
+                    <svg viewBox="2 0 32 32" width="24" height="24">
                         <use href="#shield" />
                     </svg>
                 );
@@ -108,35 +154,45 @@ export default class App extends React.Component<{}, IComponentState> {
     }
 
     private renderMenu = () => {
-        const { team, started } = this.state;
+        const { started, team } = this.state;
         return (
             <div className={appStyles.menu}>
                 <div className={appStyles.options}>
-                    {!started && (
-                        <div className={appStyles.option}>
-                            <div className={appStyles.heading}>New game</div>
-                            <div className={appStyles.buttons}>
-                                {[Team.Attackers, Team.Defenders].map(t => (
-                                    <div
-                                        key={t}
-                                        className={css({
-                                            [buttonStyles.button]: true,
-                                            [buttonStyles.buttonTeam]: true,
-                                            [buttonStyles.buttonSelected]: team === t,
-                                        })}
-                                        onClick={() => this.onSelectTeam(t)}
-                                        title={teamName(t)}>
-                                        {this.renderTeamButton(t)}
-                                    </div>
-                                ))}
+                    <div className={appStyles.title}>Stormveil</div>
+                    <div className={appStyles.option}>
+                        <div className={appStyles.heading}>New game</div>
+                        <div className={appStyles.buttons}>
+                            {[Team.Attackers, Team.Defenders].map(t => (
                                 <div
-                                    className={css(buttonStyles.button, buttonStyles.buttonStart)}
-                                    onClick={() => this.onStartNew()}>
-                                    Start new game
+                                    key={t}
+                                    className={css({
+                                        [buttonStyles.button]: true,
+                                        [buttonStyles.team]: true,
+                                        [buttonStyles.disabled]: started,
+                                        [buttonStyles.selected]: team === t,
+                                    })}
+                                    onClick={() => this.onSelectTeam(t)}
+                                    title={teamName(t)}>
+                                    {this.renderTeamButton(t)}
                                 </div>
+                            ))}
+                            <div
+                                className={css({
+                                    [buttonStyles.button]: true,
+                                    [buttonStyles.start]: true,
+                                    [buttonStyles.disabled]: started,
+                                })}
+                                onClick={() => this.onStartNew()}>
+                                Start new game
                             </div>
                         </div>
-                    )}
+                    </div>
+                    <div className={css(appStyles.option)}>
+                        <div className={appStyles.heading}>Captures</div>
+                        <div className={appStyles.content}>
+                            {this.renderScoreBoard()}
+                        </div>
+                    </div>
                     <div className={appStyles.option}>
                         <div className={appStyles.heading}>How to play?</div>
                         <div className={appStyles.content}>
@@ -177,15 +233,10 @@ export default class App extends React.Component<{}, IComponentState> {
         return (
             <div className={appStyles.appView}>
                 <div className={appStyles.appViewPanel}>
-                    <div className={appStyles.appViewContent}>
-                        <div className={appStyles.appViewTitle}>Stormveil</div>
-                        {this.renderMenu()}
-                    </div>
+                    {this.renderMenu()}
                 </div>
                 <div className={appStyles.appViewBoard}>
-                    <div className={appStyles.appViewContent}>
-                        {this.renderBoard()}
-                    </div>
+                    {this.renderBoard()}
                 </div>
             </div>
         );

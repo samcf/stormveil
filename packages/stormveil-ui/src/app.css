@@ -8,27 +8,42 @@
     display: flex;
 }
 
-.appViewContent {
-    padding: 16px 24px;
-}
-
-.appViewTitle {
+.title {
     font-size: 36px;
     margin-bottom: 24px;
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
+.menu {
+    height: 100%;
+}
+
 .appViewPanel {
     background-color: rgb(255, 255, 252);
     border-right: 1px dotted rgba(0, 0, 0, 0.10);
+    box-sizing: border-box;
+    height: 100%;
+    padding: 16px 24px;
     width: 480px;
 }
 
 .appViewBoard {
-    display: flex;
     align-items: center;
-    justify-content: center;
+    box-sizing: border-box;
+    display: flex;
     flex: 1 auto;
+    justify-content: center;
+    padding: 16px 24px;
+}
+
+.options {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.option {
+
 }
 
 .option + .option {
@@ -49,7 +64,31 @@
 }
 
 .buttons {
-    composes: content;
     display: flex;
+    font-size: 14px;
     height: 40px;
+}
+
+.score {
+    display: flex;
+    justify-content: space-between;
+    min-height: 192px;
+}
+
+.scoreNone {
+    color: rgb(140, 140, 140);
+    font-style: italic;
+}
+
+.scoreTeam {
+    flex-basis: 50%;
+}
+
+.scoreIcons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.scoreIcon {
+    margin: 0 4px 4px 0;
 }

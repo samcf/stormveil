@@ -1,15 +1,16 @@
 import { unmarshal } from "./serialization";
-import { IState, moveable, moves as movesfoo, vec } from "./state";
+import { IBoard, IState, moveable, moves as movesfoo, team, vec } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { Key } from "./types/keys";
 import { Vector } from "./types/vector";
+
 export { best } from "./ai";
 export { IState, play, team } from "./state";
 export { Team } from "./team";
 export { Tile } from "./tile";
 
-export interface IOptions {
+interface IOptions {
     board: string;
     start: Team;
 }
@@ -60,4 +61,9 @@ export function candidates(state: IState, team: Team) {
 
 export function moves(state: IState, xy: Vector) {
     return movesfoo(state.board, xy);
+}
+
+export function captured(state: IState, t: Team): number {
+    const count = (board: IBoard) => board.tiles.filter((tile: Tile) => team(tile) === t).length;
+    return count(state.initial.board) - count(state.board);
 }
