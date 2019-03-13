@@ -3,7 +3,7 @@ import React from "react";
 import { best, captured, createNew, IState, play, Team } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
 import { opponent } from "stormveil/lib/state";
-import appStyles from "./app.css";
+import styles from "./app.css";
 import Board from "./board";
 import buttonStyles from "./button.css";
 import { Vector } from "./common";
@@ -27,8 +27,10 @@ function teamName(team: Team): string {
 }
 
 export default class App extends React.Component<{}, IComponentState> {
+    private static defaultState = createNew({ board: hnefatafl, start: Team.Attackers });
+
     public state = {
-        game: createNew({ board: hnefatafl, start: Team.Attackers }),
+        game: App.defaultState,
         selected: null,
         started: false,
         team: Team.Attackers,
@@ -45,6 +47,10 @@ export default class App extends React.Component<{}, IComponentState> {
             game: createNew({ board: hnefatafl, start: team }),
             started: true,
         });
+    }
+
+    private onForfeit = () => {
+        this.setState({ game: App.defaultState, started: false });
     }
 
     private onSelectTeam = (team: Team) => {
@@ -70,26 +76,6 @@ export default class App extends React.Component<{}, IComponentState> {
         }, 750);
     }
 
-    private renderBoard = () => {
-        const {
-            game,
-            selected,
-            started,
-            team,
-        } = this.state;
-
-        return (
-            <Board
-                game={game}
-                isStarted={started}
-                onMove={this.onMove}
-                onSelect={this.onSelectTile}
-                selected={selected}
-                team={team}
-            />
-        );
-    }
-
     private renderScoreIcon = (team: Team) => {
         switch (team) {
             case Team.Attackers:
@@ -106,13 +92,13 @@ export default class App extends React.Component<{}, IComponentState> {
         const captures = captured(game, opponent(team));
         if (captures === 0) {
             return (
-                <div className={appStyles.scoreNone}>None</div>
+                <div className={styles.scoreNone}>None</div>
             );
         }
 
         return Array.from({ length:  captures }).map((_, i) => (
             <svg key={i}
-                className={appStyles.scoreIcon}
+                className={styles.scoreIcon}
                 viewBox="4 0 32 32"
                 width="28"
                 height="28">
@@ -120,19 +106,6 @@ export default class App extends React.Component<{}, IComponentState> {
             </svg>
         ));
     }
-
-    private renderScoreBoard = () => (
-        <div className={appStyles.score}>
-            {[Team.Attackers, Team.Defenders].map(team => (
-                <div key={team} className={appStyles.scoreTeam}>
-                    <div>{teamName(team)}</div>
-                    <div className={appStyles.scoreIcons}>
-                        {this.renderScore(team)}
-                    </div>
-                </div>
-            ))}
-        </div>
-    )
 
     private renderTeamButton = (team: Team) => {
         switch (team) {
@@ -153,91 +126,96 @@ export default class App extends React.Component<{}, IComponentState> {
         }
     }
 
-    private renderMenu = () => {
-        const { started, team } = this.state;
+    public render() {
+        const { game, selected, started, team } = this.state;
         return (
-            <div className={appStyles.menu}>
-                <div className={appStyles.options}>
-                    <div className={appStyles.title}>Stormveil</div>
-                    <div className={appStyles.option}>
-                        <div className={appStyles.heading}>New game</div>
-                        <div className={appStyles.buttons}>
-                            {[Team.Attackers, Team.Defenders].map(t => (
+            <div className={styles.app}>
+                <div className={styles.container}>
+                    <div className={styles.interface}>
+                        <div className={styles.controls}>
+                            <div className={css({
+                                [styles.buttons]: true,
+                                [styles.move]: started,
+                            })}>
+                                {[Team.Attackers, Team.Defenders].map(t => (
+                                    <div
+                                        key={t}
+                                        className={css({
+                                            [buttonStyles.button]: true,
+                                            [buttonStyles.team]: true,
+                                            [buttonStyles.disabled]: started,
+                                            [buttonStyles.selected]: team === t,
+                                        })}
+                                        onClick={() => this.onSelectTeam(t)}
+                                        title={teamName(t)}>
+                                        {this.renderTeamButton(t)}
+                                    </div>
+                                ))}
                                 <div
-                                    key={t}
                                     className={css({
                                         [buttonStyles.button]: true,
-                                        [buttonStyles.team]: true,
+                                        [buttonStyles.start]: true,
                                         [buttonStyles.disabled]: started,
-                                        [buttonStyles.selected]: team === t,
                                     })}
-                                    onClick={() => this.onSelectTeam(t)}
-                                    title={teamName(t)}>
-                                    {this.renderTeamButton(t)}
+                                    onClick={() => this.onStartNew()}>
+                                    Start new game
                                 </div>
-                            ))}
-                            <div
-                                className={css({
-                                    [buttonStyles.button]: true,
-                                    [buttonStyles.start]: true,
-                                    [buttonStyles.disabled]: started,
-                                })}
-                                onClick={() => this.onStartNew()}>
-                                Start new game
+                            </div>
+                            <div className={css({
+                                [styles.buttons]: true,
+                                [styles.move]: !started,
+                            })}>
+                                <div
+                                    onClick={this.onForfeit}
+                                    className={css({
+                                        [buttonStyles.button]: true,
+                                        [buttonStyles.start]: true,
+                                    })}>
+                                    Forfeit?
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.score}>
+                            <div className={css({
+                                [styles.scoreBoard]: true,
+                                [styles.move]: !this.state.started,
+                            })}>
+                                {[Team.Attackers, Team.Defenders].map(team => (
+                                    <div key={team} className={styles.scoreTeam}>
+                                        <div>{teamName(team)}</div>
+                                        <div className={styles.scoreIcons}>
+                                            {this.renderScore(team)}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className={styles.rules}>
+
+                        </div>
+                        <div className={styles.about}>
+                            <div>
+                                <div>
+                                    <a href="https://github.com/samcf/stormveil">View source on GitHub</a>
+                                </div>
+                                <div>
+                                    Stormveil is an implementation of an old Nordic board game called Tafl.<br />
+                                    Visit the <a href="https://en.wikipedia.org/wiki/Tafl_games">Wikiepdia page</a>
+                                    <span> for more information.</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className={css(appStyles.option)}>
-                        <div className={appStyles.heading}>Captures</div>
-                        <div className={appStyles.content}>
-                            {this.renderScoreBoard()}
-                        </div>
-                    </div>
-                    <div className={appStyles.option}>
-                        <div className={appStyles.heading}>How to play?</div>
-                        <div className={appStyles.content}>
-                            The objective of the <em>Defenders</em> is to move
-                            the <em>King</em> to one of the escape tiles,
-                            marked by red flags.
-                        </div>
-                        <div className={appStyles.content}>
-                            The objective of the <em>Attackers</em> is to capture
-                            the <em>King</em> by surrounding it on all four sides with
-                            attackers.
-                        </div>
-                        <div className={appStyles.content}>
-                            All pieces may move in any of the four directions
-                            (North, East, West, and South) any distance, but
-                            may not move over other pieces.
-                        </div>
-                        <div className={appStyles.content}>
-                            To capture an <em>Attacker</em> or <em>Defender</em>, it must
-                            be sandwiched between two pieces of the opposing team.
-                        </div>
-                    </div>
-                    <div className={appStyles.option}>
-                        <div className={appStyles.heading}>About</div>
-                        <div className={appStyles.content}>
-                            Stormveil is an implementation of an old Nordic
-                            board game called Tafl. Visit
-                            the <a href="https://en.wikipedia.org/wiki/Tafl_games">Wikiepdia page</a> for
-                            more information.
-                        </div>
-                    </div>
                 </div>
-            </div>
-        );
-    }
-
-    public render() {
-        return (
-            <div className={appStyles.appView}>
-                <div className={appStyles.appViewPanel}>
-                    {this.renderMenu()}
-                </div>
-                <div className={appStyles.appViewBoard}>
-                    {this.renderBoard()}
-                </div>
+                <Board
+                    className={styles.board}
+                    game={game}
+                    isStarted={started}
+                    onMove={this.onMove}
+                    onSelect={this.onSelectTile}
+                    selected={selected}
+                    team={team}
+                />
             </div>
         );
     }

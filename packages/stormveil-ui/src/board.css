@@ -48,9 +48,10 @@
 }
 
 .moveMarker {
-    stroke: rgba(255, 0, 0, 0.4);
-    stroke-width: 3px;
     animation: pulse 500ms ease 0ms infinite alternate;
+    pointer-events: none;
+    stroke-width: 3px;
+    stroke: rgba(255, 0, 0, 0.4);
 }
 
 .piecesGroup {

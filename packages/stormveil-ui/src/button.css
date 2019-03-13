@@ -1,40 +1,39 @@
 .button {
-    background-color: #f9f9f9;
-    border-radius: 3px;
-    border: 1px solid #ccc;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.08);
-    cursor: pointer;
-    transition: background-color 175ms ease;
+    border-bottom-color: #CCCCCC;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    transition: border-color 250ms ease;
 }
 
-.button:not(.disabled):hover {
-    background-color: #f2f2f2;
+.button:not(.disabled):not(.selected) {
+    cursor: pointer;
+}
+
+.button:not(.disabled):not(.selected):hover {
+    background-color: #EEEEEE;
+    border-color: #F2F2F2;
 }
 
 .button:not(.disabled):active {
-    border-color: #aaa;
-    background-color: #f1f1f1;
+    border-color: #AAAAAA;
 }
 
 .button.disabled {
     cursor: default;
-    background-color: #f2f2f2;
     color: rgb(140, 140, 140);
 }
 
 .selected {
-    border-color: white;
-    background-color: hsla(231, 48%, 16%, 1);
+    border-color: hsla(231, 48%, 16%, 1);
 }
 
 .selected:not(.disabled):hover,
 .selected:not(.disabled):active {
-    border-color: white;
-    background-color: hsla(231, 48%, 16%, 1);
+    border-color: hsla(231, 48%, 16%, 1);
 }
 
 .selected.disabled {
-    background-color: hsla(231, 10%, 60%, 1);
+    border-color: hsla(231, 10%, 60%, 1);
 }
 
 .selected.disabled.team use {
@@ -52,20 +51,16 @@
     fill: rgb(140, 140, 140);
 }
 
-.team.selected use {
-    fill: white;
-}
-
 .start {
+    border-width: 0px;
     align-items: center;
     display: flex;
     font-weight: bold;
     justify-content: flex-end;
-    margin-left: auto;
     padding: 0 16px;
     vertical-align: middle;
 }
 
-.team + .team {
-    margin-left: 8px;
+.button + .button {
+    margin-left: 24px;
 }

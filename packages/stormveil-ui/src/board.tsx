@@ -9,6 +9,7 @@ import { groupBy, Vector } from "./common";
 import { noise } from "./noise";
 
 interface IProps {
+    className?: string;
     game: IState;
     isStarted: boolean;
     onMove: (a: Vector, b: Vector) => void;
@@ -28,7 +29,7 @@ function Piece(props: { tile: ITile }) {
         case Tile.Thrn:
             return ( <use transform="translate(-16, -16)" href="#throne" style={{ fill: "white" }} /> );
         case Tile.Refu:
-            return ( <use transform="translate(-16, -16)" href="#flag" /> );
+            return ( <use transform="translate(-4, -22)" href="#flag" /> );
         case Tile.King:
         case Tile.Cast:
         case Tile.Sanc:
@@ -251,7 +252,10 @@ export default class Board extends React.Component<IProps, {}> {
 
     public render() {
         return (
-            <svg width="704" height="456">
+            <svg
+                className={this.props.className}
+                width="704"
+                height="456">
                 <defs>
                     <marker id="moveMarkerHead" orient="auto" markerWidth="2" markerHeight="4" refX="0.1" refY="2">
                         <path d="M0,0 V4 L2,2 Z" style={{ fill: "rgba(255, 0, 0, 0.4)" }} />

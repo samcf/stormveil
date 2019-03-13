@@ -1,11 +1,59 @@
-.appView,
-.appViewPanel,
-.appViewBoard {
+.app {
     min-height: 100vh;
 }
 
-.appView {
+.container {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    pointer-events: visible;
+}
+
+.board {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.interface {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+}
+
+.quadrant {
+    padding: 32px;
+}
+
+.controls {
+    composes: quadrant;
+}
+
+.score {
+    composes: quadrant;
     display: flex;
+    justify-content: flex-end;
+}
+
+.rules {
+    composes: quadrant;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    max-width: 512px;
+}
+
+.about {
+    align-items: flex-end;
+    composes: quadrant;
+    display: flex;
+    font-size: 14px;
+    justify-content: flex-end;
+    text-align: right;
 }
 
 .title {
@@ -18,61 +66,33 @@
     height: 100%;
 }
 
-.appViewPanel {
-    background-color: rgb(255, 255, 252);
-    border-right: 1px dotted rgba(0, 0, 0, 0.10);
-    box-sizing: border-box;
-    height: 100%;
-    padding: 16px 24px;
-    width: 480px;
-}
-
-.appViewBoard {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    flex: 1 auto;
-    justify-content: center;
-    padding: 16px 24px;
-}
-
 .options {
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.option {
-
-}
-
-.option + .option {
-    margin-top: 36px;
-}
-
-.heading {
-    border-bottom: 1px dashed rgb(220, 220, 220);
-    margin-bottom: 16px;
-}
-
-.content {
-    font-size: 14px;
-}
-
-.content + .content {
-    margin-top: 8px;
-}
-
 .buttons {
     display: flex;
     font-size: 14px;
     height: 40px;
+    max-width: 512px;
+    position: absolute;
+    transform: translateY(0);
+    transition: transform 500ms ease;
 }
 
-.score {
+.scoreBoard {
     display: flex;
-    justify-content: space-between;
-    min-height: 192px;
+    justify-content: flex-end;
+    min-width: 512px;
+    position: absolute;
+    transform: translateY(0);
+    transition: transform 500ms ease;
+}
+
+.move {
+    transform: translateY(-256px);
 }
 
 .scoreNone {
