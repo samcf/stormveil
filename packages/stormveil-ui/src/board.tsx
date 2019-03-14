@@ -143,7 +143,7 @@ export default class Board extends React.Component<IProps, {}> {
         }
 
         const { game, team } = this.props;
-        if (turn(game) !== team) {
+        if (game.turn !== team) {
             return false;
         }
 
@@ -206,7 +206,7 @@ export default class Board extends React.Component<IProps, {}> {
     private renderLastMove = () => {
         const { game, team } = this.props;
         const last = game.history[game.history.length - 1];
-        if (last === undefined || turn(game) !== team) {
+        if (last === undefined || game.turn !== team) {
             return null;
         }
 

@@ -58,10 +58,6 @@ export function tiles(state: State): ITile[] {
     });
 }
 
-export function turn(state: State) {
-    return state.turn;
-}
-
 export function candidates(state: State, team: Team) {
     return moveable(state.board, team);
 }
