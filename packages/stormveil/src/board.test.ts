@@ -1,7 +1,7 @@
 import test from "tape";
 import { resolve } from "./board";
 import { marshal, unmarshal } from "./serialization";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 test("Board captures and moves", (assert) => {
     const tests: Array<[string, string, string, Vector, Vector]> = [

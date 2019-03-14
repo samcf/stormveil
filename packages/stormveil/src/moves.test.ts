@@ -2,7 +2,7 @@ import test from "tape";
 import { hnefatafl } from "./boards";
 import { moves } from "./moves";
 import { unmarshal } from "./serialization";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 test("Generating legal moves", assert => {
     const indexed = (vs: Vector[]) =>

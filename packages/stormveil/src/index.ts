@@ -4,7 +4,7 @@ import { unmarshal } from "./serialization";
 import { State } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
-import { Key } from "./types/keys";
+import { Key } from "./keys";
 
 export { best } from "./ai";
 export { allegiance } from "./allegiance";
@@ -15,6 +15,7 @@ export { play } from "./play";
 export { State } from "./state";
 export { Team } from "./team";
 export { Tile } from "./tile";
+export { victor } from "./victor";
 
 interface IOptions {
     board: string;

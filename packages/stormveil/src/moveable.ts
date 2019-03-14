@@ -2,7 +2,7 @@ import { allegiance } from "./allegiance";
 import { Board, vec } from "./board";
 import { moves } from "./moves";
 import { Team } from "./team";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 // moveable returns a list of tile positions for the given team that have
 // available legal moves.

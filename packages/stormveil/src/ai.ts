@@ -4,7 +4,7 @@ import { Mask } from "./masks";
 import { moves } from "./moves";
 import { opponent } from "./opponent";
 import { Team } from "./team";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 type Move = [Vector, Vector];
 

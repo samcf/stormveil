@@ -2,7 +2,7 @@ import { get, Board } from "./board";
 import { Mask } from "./masks";
 import { offsets } from "./offsets";
 import { Tile } from "./tile";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 // allowed returns true if the tile `t` can legally move into the tile `u`.
 // For example, for most pieces it is allowed to move into the empty tile, and

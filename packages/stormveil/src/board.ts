@@ -3,7 +3,7 @@ import { Mask } from "./masks";
 import { offsets } from "./offsets";
 import { Team } from "./team";
 import { Tile } from "./tile";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 // The board is represented as a flat array of Tile and a width. This width is
 // used to determine which indexes to partition the tiles array when performing

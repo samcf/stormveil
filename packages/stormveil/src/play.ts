@@ -1,8 +1,8 @@
 import { key, resolve } from "./board";
+import { KeySet } from "./keys";
 import { opponent } from "./opponent";
 import { State } from "./state";
-import { KeySet } from "./types/keys";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 // deriveNextKeys returns a new KeySet as a function of the given state and
 // start and stop vectors. This maintains the identity of moving tiles and

@@ -1,7 +1,7 @@
 import { Board } from "./board";
+import { KeySet } from "./keys";
 import { Team } from "./team";
-import { KeySet } from "./types/keys";
-import { Vector } from "./types/vector";
+import { Vector } from "./vector";
 
 // SimpleState a board value and current turn.
 interface SimpleState {
