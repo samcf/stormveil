@@ -1,8 +1,8 @@
+import { allegiance } from "./allegiance";
 import { IBoard, resolve, vec } from "./board";
 import { Mask } from "./masks";
 import { moves } from "./moves";
 import { opponent } from "./opponent";
-import { team } from "./state";
 import { Team } from "./team";
 import { Vector } from "./types/vector";
 
@@ -12,7 +12,7 @@ function evaluate(board: IBoard, turn: Team): number {
     let sum = 0;
     for (let i = 0; i < board.tiles.length; i += 1) {
         const t = board.tiles[i];
-        const s = team(t);
+        const s = allegiance(t);
         if (t & ~Mask.Capturable) {
             continue;
         }
@@ -31,7 +31,7 @@ function evaluate(board: IBoard, turn: Team): number {
 function iterate(board: IBoard, turn: Team, fn: (a: Vector, b: Vector) => void): void {
     for (let i = 0; i < board.tiles.length; i += 1) {
         const t = board.tiles[i];
-        if (team(t) !== turn) {
+        if (allegiance(t) !== turn) {
             continue;
         }
 

@@ -14,17 +14,3 @@ export interface IState extends ISimpleState {
     initial: ISimpleState;
     keys: KeySet;
 }
-
-export function team(t: Tile): Team {
-    switch (t) {
-        case Tile.Defn:
-        case Tile.King:
-        case Tile.Cast:
-        case Tile.Sanc:
-            return Team.Defenders;
-        case Tile.Attk:
-            return Team.Attackers;
-        default:
-            return Team.None;
-    }
-}

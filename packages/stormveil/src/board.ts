@@ -1,6 +1,6 @@
+import { allegiance } from "./allegiance";
 import { Mask } from "./masks";
 import { offsets } from "./offsets";
-import { team } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { Vector } from "./types/vector";
@@ -48,11 +48,11 @@ function hostile(a: Tile, b: Tile): boolean {
         return true;
     }
 
-    if (team(a) === Team.None || team(b) === Team.None) {
+    if (allegiance(a) === Team.None || allegiance(b) === Team.None) {
         return false;
     }
 
-    return team(a) !== team(b);
+    return allegiance(a) !== allegiance(b);
 }
 
 function into(a: Tile, b: Tile): Tile {

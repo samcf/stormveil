@@ -3,7 +3,7 @@ import * as Color from "d3-color";
 import * as Scale from "d3-scale";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
-import { candidates, IState, ITile, moves, Team, team, Tile, tiles, turn } from "stormveil";
+import { allegiance, candidates, IState, ITile, moves, Team, Tile, tiles, turn } from "stormveil";
 import styles from "./board.css";
 import { groupBy, Vector } from "./common";
 import { noise } from "./noise";
@@ -226,7 +226,7 @@ export default class Board extends React.Component<IProps, {}> {
 
     private renderTileContents = () => {
         const { game, isStarted, team: playing } = this.props;
-        const groups = groupBy(tiles(game), tile => team(tile.t));
+        const groups = groupBy(tiles(game), tile => allegiance(tile.t));
         return Object.keys(groups).map(type => (
             <g key={type} className={css({ [styles.bounce]: !isStarted && Number(type) === playing })}>
                 {groups[type].slice().sort((a, b) => a.k - b.k).map(tile => {

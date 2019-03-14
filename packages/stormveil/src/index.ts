@@ -1,17 +1,19 @@
+import { allegiance } from "./allegiance";
 import { IBoard, vec } from "./board";
 import { moveable } from "./moveable";
 import { moves as possibleMoves } from "./moves";
 import { unmarshal } from "./serialization";
-import { IState, team } from "./state";
+import { IState } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { Key } from "./types/keys";
 import { Vector } from "./types/vector";
 
 export { best } from "./ai";
+export { allegiance } from "./allegiance";
 export { opponent } from "./opponent";
 export { play } from "./play";
-export { IState, team } from "./state";
+export { IState } from "./state";
 export { Team } from "./team";
 export { Tile } from "./tile";
 
@@ -69,6 +71,6 @@ export function moves(state: IState, xy: Vector) {
 }
 
 export function captured(state: IState, t: Team): number {
-    const count = (board: IBoard) => board.tiles.filter((tile: Tile) => team(tile) === t).length;
+    const count = (board: IBoard) => board.tiles.filter((tile: Tile) => allegiance(tile) === t).length;
     return count(state.initial.board) - count(state.board);
 }
