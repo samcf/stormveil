@@ -48,8 +48,8 @@
 }
 
 .about {
-    align-items: flex-end;
     composes: quadrant;
+    align-items: flex-end;
     display: flex;
     font-size: 14px;
     justify-content: flex-end;
@@ -73,12 +73,13 @@
 }
 
 .buttons {
+    align-items: stretch;
     display: flex;
     font-size: 14px;
     height: 40px;
     max-width: 512px;
     position: absolute;
-    transform: translateY(0);
+    transform: translateY(-256px);
     transition: transform 500ms ease;
 }
 
@@ -87,12 +88,12 @@
     justify-content: flex-end;
     min-width: 512px;
     position: absolute;
-    transform: translateY(0);
+    transform: translateY(-256px);
     transition: transform 500ms ease;
 }
 
-.move {
-    transform: translateY(-256px);
+.active {
+    transform: translateY(0);
 }
 
 .scoreNone {

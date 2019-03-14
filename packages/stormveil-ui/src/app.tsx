@@ -1,6 +1,6 @@
 import css from "classnames";
 import React from "react";
-import { best, captured, createNew, opponent, play, State, Team } from "stormveil";
+import { best, captured, createNew, opponent, play, victor, State, Team } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
 import styles from "./app.css";
 import Board from "./board";
@@ -16,12 +16,9 @@ interface IComponentState {
 
 function teamName(team: Team): string {
     switch (team) {
-        case Team.Attackers:
-            return "Attackers";
-        case Team.Defenders:
-            return "Defenders";
-        default:
-            return "";
+        case Team.Attackers: return "Attackers";
+        case Team.Defenders: return "Defenders";
+        default: return "";
     }
 }
 
@@ -48,7 +45,7 @@ export default class App extends React.Component<{}, IComponentState> {
         });
     }
 
-    private onForfeit = () => {
+    private onRestart = () => {
         this.setState({ game: App.defaultState, started: false });
     }
 
@@ -68,6 +65,11 @@ export default class App extends React.Component<{}, IComponentState> {
         const { game, team } = this.state;
         const next = play(game, a, b);
         this.setState({ game: next, selected: null });
+
+        if (victor(next.board) != null) {
+            return;
+        }
+
         window.setTimeout(() => {
             const enemy = opponent(team);
             const [ ba, bb ] = best(next.board, enemy, 3);
@@ -75,12 +77,12 @@ export default class App extends React.Component<{}, IComponentState> {
         }, 750);
     }
 
-    private renderScoreIcon = (team: Team) => {
+    private renderTeamIcon = (team: Team) => {
         switch (team) {
             case Team.Attackers:
                 return <use href="#sword" transform="rotate(45) translate(8, -16)" />;
             case Team.Defenders:
-                return <use href="#shield" />;
+                return <use href="#shield" transform="translate(-2, 0)" />;
             default:
                 return null;
         }
@@ -101,32 +103,14 @@ export default class App extends React.Component<{}, IComponentState> {
                 viewBox="4 0 32 32"
                 width="28"
                 height="28">
-                {this.renderScoreIcon(opponent(team))}
+                {this.renderTeamIcon(opponent(team))}
             </svg>
         ));
     }
 
-    private renderTeamButton = (team: Team) => {
-        switch (team) {
-            case Team.Attackers:
-                return (
-                    <svg viewBox="0 0 32 32" width="24" height="24">
-                        <use href="#sword" transform="rotate(45) translate(8, -16)" />
-                    </svg>
-                );
-            case Team.Defenders:
-                return (
-                    <svg viewBox="2 0 32 32" width="24" height="24">
-                        <use href="#shield" />
-                    </svg>
-                );
-            default:
-                return null;
-        }
-    }
-
     public render() {
         const { game, selected, started, team } = this.state;
+        const winner = victor(game.board);
         return (
             <div className={styles.app}>
                 <div className={styles.container}>
@@ -134,7 +118,7 @@ export default class App extends React.Component<{}, IComponentState> {
                         <div className={styles.controls}>
                             <div className={css({
                                 [styles.buttons]: true,
-                                [styles.move]: started,
+                                [styles.active]: !started && winner == null,
                             })}>
                                 {[Team.Attackers, Team.Defenders].map(t => (
                                     <div
@@ -147,7 +131,9 @@ export default class App extends React.Component<{}, IComponentState> {
                                         })}
                                         onClick={() => this.onSelectTeam(t)}
                                         title={teamName(t)}>
-                                        {this.renderTeamButton(t)}
+                                        <svg viewBox="0 0 32 32" width={24} height={24}>
+                                            {this.renderTeamIcon(t)}
+                                        </svg>
                                     </div>
                                 ))}
                                 <div
@@ -162,10 +148,10 @@ export default class App extends React.Component<{}, IComponentState> {
                             </div>
                             <div className={css({
                                 [styles.buttons]: true,
-                                [styles.move]: !started,
+                                [styles.active]: started && winner == null,
                             })}>
                                 <div
-                                    onClick={this.onForfeit}
+                                    onClick={this.onRestart}
                                     className={css({
                                         [buttonStyles.button]: true,
                                         [buttonStyles.start]: true,
@@ -173,11 +159,26 @@ export default class App extends React.Component<{}, IComponentState> {
                                     Forfeit?
                                 </div>
                             </div>
+                            <div className={css({
+                                [styles.buttons]: true,
+                                [styles.active]: started && winner !== null,
+                            })}>
+                                <div style={{ alignSelf: "center" }}>
+                                    {winner !== null && teamName(winner)} are victorious!
+                                </div>
+                                <div onClick={this.onRestart}
+                                    className={css({
+                                        [buttonStyles.button]: true,
+                                        [buttonStyles.start]: true,
+                                    })}>
+                                    New game
+                                </div>
+                            </div>
                         </div>
                         <div className={styles.score}>
                             <div className={css({
                                 [styles.scoreBoard]: true,
-                                [styles.move]: !this.state.started,
+                                [styles.active]: started,
                             })}>
                                 {[Team.Attackers, Team.Defenders].map(team => (
                                     <div key={team} className={styles.scoreTeam}>
