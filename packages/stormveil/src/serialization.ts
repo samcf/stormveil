@@ -2,10 +2,13 @@ import { Board } from "./board";
 import { partition } from "./partition";
 import { Tile } from "./tile";
 
+// flat returns a flattened shallow copy of the given collection.
 function flat<T>([first, ...rest]: T[][]): T[] {
     return rest.reduce((result, coll) => result.concat(coll), first);
 }
 
+// encode returns a string representing the serialized version of the given
+// tile.
 function encode(t: Tile): string {
     switch (t) {
         case Tile.Attk: return "A";
@@ -21,6 +24,8 @@ function encode(t: Tile): string {
     }
 }
 
+// decode returns a Tile representing the unserialized representation of the
+// given string, Tile.None if no appropriate tile is found.
 function decode(s: string): Tile {
     switch (s) {
         case "A": return Tile.Attk;
@@ -36,6 +41,7 @@ function decode(s: string): Tile {
     }
 }
 
+// marshal returns a human-readable representation of the given board object.
 export function marshal(s: Board): string {
     const tiles = s.tiles.map(n => encode(n));
     return partition(tiles, s.width)
@@ -43,6 +49,7 @@ export function marshal(s: Board): string {
         .join("\n");
 }
 
+// unmarshal returns a new board from the given marshaled board string.
 export function unmarshal(s: string): Board {
     const tiles = s
         .trim()

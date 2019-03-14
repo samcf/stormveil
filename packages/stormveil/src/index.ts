@@ -1,7 +1,5 @@
 import { allegiance } from "./allegiance";
 import { Board, vec } from "./board";
-import { moveable } from "./moveable";
-import { moves as possibleMoves } from "./moves";
 import { unmarshal } from "./serialization";
 import { State } from "./state";
 import { Team } from "./team";
@@ -31,6 +29,7 @@ export interface ITile {
     k: Key;
 }
 
+// createNew returns a new State object from the given options configuration.
 export function createNew(options: IOptions): State {
     const board = unmarshal(options.board);
     return {
@@ -45,6 +44,8 @@ export function createNew(options: IOptions): State {
     };
 }
 
+// tiles returns an array of rich tile descriptions which includes their type,
+// position, unique idendity, and initial type.
 export function tiles(state: State): ITile[] {
     const { board, initial, keys } = state;
     return board.tiles.map((tile, i) => {
@@ -59,6 +60,8 @@ export function tiles(state: State): ITile[] {
     });
 }
 
+// captured returns the number of pieces that have been captured as the given
+// team.
 export function captured(state: State, t: Team): number {
     const count = (board: Board) => board.tiles.filter((tile: Tile) => allegiance(tile) === t).length;
     return count(state.initial.board) - count(state.board);

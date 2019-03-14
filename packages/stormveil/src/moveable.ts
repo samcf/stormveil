@@ -4,6 +4,9 @@ import { moves } from "./moves";
 import { Team } from "./team";
 import { Vector } from "./types/vector";
 
+// moveable returns a list of tile positions for the given team that have
+// available legal moves.
+// ex. moveable(state, Team.Attackers) => [[3, 0], [4, 0], [5, 0], [5, 1], ...]
 export function moveable(s: Board, t: Team): Vector[] {
     const result = [];
     for (let i = 0; i < s.tiles.length; i += 1) {

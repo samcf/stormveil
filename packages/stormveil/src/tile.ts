@@ -1,3 +1,5 @@
+// Tile is an enum of all possible Tiles. Note the values: increasing powers of
+// 2 make these tiles useful within bitmasks.
 export const enum Tile {
     None =   1,
     Empt =   2,
