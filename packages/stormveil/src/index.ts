@@ -7,10 +7,11 @@ import { State } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { Key } from "./types/keys";
-import { Vector } from "./types/vector";
 
 export { best } from "./ai";
 export { allegiance } from "./allegiance";
+export { moveable } from "./moveable";
+export { moves } from "./moves";
 export { opponent } from "./opponent";
 export { play } from "./play";
 export { State } from "./state";
@@ -56,14 +57,6 @@ export function tiles(state: State): ITile[] {
             k: keys.values[i],
         };
     });
-}
-
-export function candidates(state: State, team: Team) {
-    return moveable(state.board, team);
-}
-
-export function moves(state: State, xy: Vector) {
-    return possibleMoves(state.board, xy);
 }
 
 export function captured(state: State, t: Team): number {

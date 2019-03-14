@@ -3,7 +3,7 @@ import * as Color from "d3-color";
 import * as Scale from "d3-scale";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
-import { allegiance, candidates, ITile, moves, State, Team, Tile, tiles, turn } from "stormveil";
+import { allegiance, ITile, moveable, moves, State, Team, Tile, tiles } from "stormveil";
 import styles from "./board.css";
 import { groupBy, Vector } from "./common";
 import { noise } from "./noise";
@@ -150,7 +150,7 @@ export default class Board extends React.Component<IProps, {}> {
         const { x, y } = tile;
         const { selected } = this.props;
         if (selected === null) {
-            return candidates(game, team)
+            return moveable(game.board, team)
                 .some(([ vx, vy ]) => vx === x && vy === y);
         }
 
@@ -159,7 +159,7 @@ export default class Board extends React.Component<IProps, {}> {
         }
 
         const [ sx, sy ] = selected;
-        return moves(game, [sx, sy])
+        return moves(game.board, [sx, sy])
             .some(([ vx, vy ]) => vx === x && vy === y);
     }
 
