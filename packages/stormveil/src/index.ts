@@ -1,10 +1,10 @@
 import { allegiance } from "./allegiance";
 import { Board, vec } from "./board";
+import { createNewKeySet, Key } from "./keys";
 import { unmarshal } from "./serialization";
 import { State } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
-import { Key } from "./keys";
 
 export { best } from "./ai";
 export { allegiance } from "./allegiance";
@@ -37,10 +37,7 @@ export function createNew(options: IOptions): State {
         board: board,
         history: [],
         initial: { board: board, turn: options.start },
-        keys: {
-            last: board.tiles.length,
-            values: board.tiles.map((_, i) => i),
-        },
+        keys: createNewKeySet(board.tiles.length),
         turn: options.start,
     };
 }
