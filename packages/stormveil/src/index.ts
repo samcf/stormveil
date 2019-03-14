@@ -1,12 +1,16 @@
+import { moveable } from "./moveable";
+import { moves as possibleMoves } from "./moves";
 import { unmarshal } from "./serialization";
-import { IBoard, IState, moveable, moves as movesfoo, team, vec } from "./state";
+import { IBoard, IState, team, vec } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { Key } from "./types/keys";
 import { Vector } from "./types/vector";
 
 export { best } from "./ai";
-export { IState, play, team } from "./state";
+export { opponent } from "./opponent";
+export { play } from "./play";
+export { IState, team } from "./state";
 export { Team } from "./team";
 export { Tile } from "./tile";
 
@@ -60,7 +64,7 @@ export function candidates(state: IState, team: Team) {
 }
 
 export function moves(state: IState, xy: Vector) {
-    return movesfoo(state.board, xy);
+    return possibleMoves(state.board, xy);
 }
 
 export function captured(state: IState, t: Team): number {

@@ -1,8 +1,7 @@
 import css from "classnames";
 import React from "react";
-import { best, captured, createNew, IState, play, Team } from "stormveil";
+import { best, captured, createNew, IState, opponent, play, Team } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
-import { opponent } from "stormveil/lib/state";
 import styles from "./app.css";
 import Board from "./board";
 import buttonStyles from "./button.css";

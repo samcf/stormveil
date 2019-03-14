@@ -1,4 +1,6 @@
-import { capturable, IBoard, moves, opponent, resolve, team, vec } from "./state";
+import { moves } from "./moves";
+import { opponent } from "./opponent";
+import { capturable, IBoard, resolve, team, vec } from "./state";
 import { Team } from "./team";
 import { Vector } from "./types/vector";
 

@@ -1,13 +1,9 @@
+import { Mask } from "./masks";
+import { offsets } from "./offsets";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { KeySet } from "./types/keys";
 import { Vector } from "./types/vector";
-
-const enum Mask {
-    Capturable = Tile.Attk | Tile.Defn | Tile.King | Tile.Cast,
-    KingAnvils = Tile.Attk | Tile.Refu | Tile.None,
-    KingLike   = Tile.King | Tile.Cast | Tile.Sanc,
-}
 
 export interface IBoard {
     tiles: Tile[];
@@ -25,8 +21,6 @@ export interface IState extends ISimpleState {
     keys: KeySet;
 }
 
-const offsets: number[] = [0, -1, 1, 0, 0, 1, -1, 0];
-
 function clone(s: IBoard): IBoard {
     return { tiles: s.tiles.slice(), width: s.width };
 }
@@ -35,11 +29,11 @@ export function vec(w: number, i: number): Vector {
     return [i % w, Math.floor(i / w)];
 }
 
-function key(w: number, x: number, y: number): number {
+export function key(w: number, x: number, y: number): number {
     return w * y + x;
 }
 
-function get(s: IBoard, x: number, y: number): Tile {
+export function get(s: IBoard, x: number, y: number): Tile {
     const t = s.tiles[key(s.width, x, y)];
     if (t === undefined) {
         return Tile.None;
@@ -71,17 +65,6 @@ export function team(t: Tile): Team {
             return Team.Attackers;
         default:
             return Team.None;
-    }
-}
-
-export function opponent(t: Team): Team {
-    switch (t) {
-        case Team.Attackers:
-            return Team.Defenders;
-        case Team.Defenders:
-            return Team.Attackers;
-        case Team.None:
-            throw new Error();
     }
 }
 
@@ -179,91 +162,4 @@ export function resolve(s: IBoard, [ax, ay]: Vector, [bx, by]: Vector): IBoard {
     }
 
     return state;
-}
-
-function allowed(t: Tile, u: Tile): boolean {
-    if (u & Tile.Empt) {
-        return true;
-    }
-
-    if ((t & Mask.KingLike) &&
-        (u & (Tile.Thrn | Tile.Refu))) {
-        return true;
-    }
-
-    return false;
-}
-
-export function moveable(s: IBoard, t: Team): Vector[] {
-    const result = [];
-    for (let i = 0; i < s.tiles.length; i += 1) {
-        if (team(s.tiles[i]) !== t) {
-            continue;
-        }
-
-        const v = vec(s.width, i);
-        const vs = moves(s, v);
-        if (vs.length === 0) {
-            continue;
-        }
-
-        result.push(v);
-    }
-
-    return result;
-}
-
-export function moves(s: IBoard, [ax, ay]: Vector): Vector[] {
-    const m = [];
-    const t = get(s, ax, ay);
-
-    for (let i = 0; i < 8; i += 2) {
-        const ox = offsets[i];
-        const oy = offsets[i + 1];
-        for (let k = 1; k < Infinity; k += 1) {
-            const bx = ax + (ox * k);
-            const by = ay + (oy * k);
-            if (bx < 0 || bx >= s.width) {
-                break;
-            }
-
-            const n = get(s, bx, by);
-            if (t & Tile.Defn && n & Tile.Thrn) {
-                continue;
-            }
-
-            if (allowed(t, n)) {
-                m.push([bx, by] as Vector);
-                continue;
-            }
-
-            break;
-        }
-    }
-
-    return m;
-}
-
-function deriveNextKeys(state: IState, [ ax, ay ]: Vector, [ bx, by ]: Vector): KeySet {
-    const { board: { width }, keys: { last, values } } = state;
-    const latest = last + 1;
-    const prev = key(width, ax, ay);
-    const next = key(width, bx, by);
-    const keys = values.slice();
-    keys[next] = keys[prev];
-    keys[prev] = latest;
-    return {
-        last: latest,
-        values: keys,
-    };
-}
-
-export function play(s: IState, a: Vector, b: Vector): IState {
-    return {
-        board: resolve(s.board, a, b),
-        history: s.history.concat([[a, b]]),
-        turn: opponent(s.turn),
-        keys: deriveNextKeys(s, a, b),
-        initial: s.initial,
-    };
 }

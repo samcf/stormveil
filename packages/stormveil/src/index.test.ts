@@ -1,7 +1,7 @@
 import test from "tape";
 import { hnefatafl } from "./boards";
 import { createNew, tiles } from "./index";
-import { play } from "./state";
+import { play } from "./play";
 import { Team } from "./team";
 
 function isUnique<T>(values: T[]): boolean {
