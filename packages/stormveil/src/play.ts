@@ -1,10 +1,10 @@
 import { key, resolve } from "./board";
 import { opponent } from "./opponent";
-import { IState } from "./state";
+import { State } from "./state";
 import { KeySet } from "./types/keys";
 import { Vector } from "./types/vector";
 
-function deriveNextKeys(state: IState, [ ax, ay ]: Vector, [ bx, by ]: Vector): KeySet {
+function deriveNextKeys(state: State, [ ax, ay ]: Vector, [ bx, by ]: Vector): KeySet {
     const { board: { width }, keys: { last, values } } = state;
     const latest = last + 1;
     const prev = key(width, ax, ay);
@@ -18,7 +18,7 @@ function deriveNextKeys(state: IState, [ ax, ay ]: Vector, [ bx, by ]: Vector): 
     };
 }
 
-export function play(s: IState, a: Vector, b: Vector): IState {
+export function play(s: State, a: Vector, b: Vector): State {
     return {
         board: resolve(s.board, a, b),
         history: s.history.concat([[a, b]]),

@@ -3,14 +3,14 @@ import * as Color from "d3-color";
 import * as Scale from "d3-scale";
 import React from "react";
 import { CSSTransition } from "react-transition-group";
-import { allegiance, candidates, IState, ITile, moves, Team, Tile, tiles, turn } from "stormveil";
+import { allegiance, candidates, ITile, moves, State, Team, Tile, tiles, turn } from "stormveil";
 import styles from "./board.css";
 import { groupBy, Vector } from "./common";
 import { noise } from "./noise";
 
 interface IProps {
     className?: string;
-    game: IState;
+    game: State;
     isStarted: boolean;
     onMove: (a: Vector, b: Vector) => void;
     onSelect: (a: Vector | null) => void;

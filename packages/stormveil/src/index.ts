@@ -3,7 +3,7 @@ import { Board, vec } from "./board";
 import { moveable } from "./moveable";
 import { moves as possibleMoves } from "./moves";
 import { unmarshal } from "./serialization";
-import { IState } from "./state";
+import { State } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { Key } from "./types/keys";
@@ -13,7 +13,7 @@ export { best } from "./ai";
 export { allegiance } from "./allegiance";
 export { opponent } from "./opponent";
 export { play } from "./play";
-export { IState } from "./state";
+export { State } from "./state";
 export { Team } from "./team";
 export { Tile } from "./tile";
 
@@ -30,7 +30,7 @@ export interface ITile {
     k: Key;
 }
 
-export function createNew(options: IOptions): IState {
+export function createNew(options: IOptions): State {
     const board = unmarshal(options.board);
     return {
         board: board,
@@ -44,7 +44,7 @@ export function createNew(options: IOptions): IState {
     };
 }
 
-export function tiles(state: IState): ITile[] {
+export function tiles(state: State): ITile[] {
     const { board, initial, keys } = state;
     return board.tiles.map((tile, i) => {
         const [ x, y ] = vec(board.width, i);
@@ -58,19 +58,19 @@ export function tiles(state: IState): ITile[] {
     });
 }
 
-export function turn(state: IState) {
+export function turn(state: State) {
     return state.turn;
 }
 
-export function candidates(state: IState, team: Team) {
+export function candidates(state: State, team: Team) {
     return moveable(state.board, team);
 }
 
-export function moves(state: IState, xy: Vector) {
+export function moves(state: State, xy: Vector) {
     return possibleMoves(state.board, xy);
 }
 
-export function captured(state: IState, t: Team): number {
+export function captured(state: State, t: Team): number {
     const count = (board: Board) => board.tiles.filter((tile: Tile) => allegiance(tile) === t).length;
     return count(state.initial.board) - count(state.board);
 }

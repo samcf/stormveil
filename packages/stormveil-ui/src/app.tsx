@@ -1,6 +1,6 @@
 import css from "classnames";
 import React from "react";
-import { best, captured, createNew, IState, opponent, play, Team } from "stormveil";
+import { best, captured, createNew, opponent, play, State, Team } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
 import styles from "./app.css";
 import Board from "./board";
@@ -8,7 +8,7 @@ import buttonStyles from "./button.css";
 import { Vector } from "./common";
 
 interface IComponentState {
-    game: IState;
+    game: State;
     selected: Vector | null;
     started: boolean;
     team: Team;

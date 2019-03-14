@@ -1,16 +1,15 @@
 import { Board } from "./board";
 import { Team } from "./team";
-import { Tile } from "./tile";
 import { KeySet } from "./types/keys";
 import { Vector } from "./types/vector";
 
-interface ISimpleState {
+interface SimpleState {
     board: Board;
     turn: Team;
 }
 
-export interface IState extends ISimpleState {
+export interface State extends SimpleState {
     history: Array<[Vector, Vector]>;
-    initial: ISimpleState;
+    initial: SimpleState;
     keys: KeySet;
 }
