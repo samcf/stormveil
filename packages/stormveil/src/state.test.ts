@@ -1,8 +1,8 @@
 import test from "tape";
+import { resolve } from "./board";
 import { hnefatafl } from "./boards";
 import { moves } from "./moves";
 import { marshal, unmarshal } from "./serialization";
-import { resolve } from "./state";
 import { Vector } from "./types/vector";
 
 test("Board captures and moves", (assert) => {

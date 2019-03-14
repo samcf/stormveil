@@ -1,5 +1,6 @@
+import { IBoard, vec } from "./board";
 import { moves } from "./moves";
-import { IBoard, team, vec } from "./state";
+import { team } from "./state";
 import { Team } from "./team";
 import { Vector } from "./types/vector";
 

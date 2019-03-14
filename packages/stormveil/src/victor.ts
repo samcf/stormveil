@@ -1,4 +1,4 @@
-import { IBoard } from "./state";
+import { IBoard } from "./board";
 import { Team } from "./team";
 import { Tile } from "./tile";
 

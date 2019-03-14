@@ -1,7 +1,8 @@
+import { IBoard, vec } from "./board";
 import { moveable } from "./moveable";
 import { moves as possibleMoves } from "./moves";
 import { unmarshal } from "./serialization";
-import { IBoard, IState, team, vec } from "./state";
+import { IState, team } from "./state";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { Key } from "./types/keys";

@@ -1,6 +1,8 @@
+import { IBoard, resolve, vec } from "./board";
+import { Mask } from "./masks";
 import { moves } from "./moves";
 import { opponent } from "./opponent";
-import { capturable, IBoard, resolve, team, vec } from "./state";
+import { team } from "./state";
 import { Team } from "./team";
 import { Vector } from "./types/vector";
 
@@ -11,7 +13,7 @@ function evaluate(board: IBoard, turn: Team): number {
     for (let i = 0; i < board.tiles.length; i += 1) {
         const t = board.tiles[i];
         const s = team(t);
-        if (!capturable(t)) {
+        if (t & ~Mask.Capturable) {
             continue;
         }
 

@@ -1,6 +1,6 @@
+import { get, IBoard } from "./board";
 import { Mask } from "./masks";
 import { offsets } from "./offsets";
-import { get, IBoard } from "./state";
 import { Tile } from "./tile";
 import { Vector } from "./types/vector";
 

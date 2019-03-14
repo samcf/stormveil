@@ -1,5 +1,5 @@
+import { IBoard } from "./board";
 import { partition } from "./partition";
-import { IBoard } from "./state";
 import { Tile } from "./tile";
 
 function flat<T>([first, ...rest]: T[][]): T[] {

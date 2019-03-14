@@ -1,5 +1,6 @@
+import { key, resolve } from "./board";
 import { opponent } from "./opponent";
-import { IState, key, resolve } from "./state";
+import { IState } from "./state";
 import { KeySet } from "./types/keys";
 import { Vector } from "./types/vector";
 
