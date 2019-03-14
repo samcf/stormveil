@@ -1,11 +1,11 @@
-import { IBoard } from "./board";
+import { Board } from "./board";
 import { Team } from "./team";
 import { Tile } from "./tile";
 import { KeySet } from "./types/keys";
 import { Vector } from "./types/vector";
 
 interface ISimpleState {
-    board: IBoard;
+    board: Board;
     turn: Team;
 }
 

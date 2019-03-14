@@ -1,4 +1,4 @@
-import { IBoard } from "./board";
+import { Board } from "./board";
 import { partition } from "./partition";
 import { Tile } from "./tile";
 
@@ -36,14 +36,14 @@ function decode(s: string): Tile {
     }
 }
 
-export function marshal(s: IBoard): string {
+export function marshal(s: Board): string {
     const tiles = s.tiles.map(n => encode(n));
     return partition(tiles, s.width)
         .map(r => r.join(" "))
         .join("\n");
 }
 
-export function unmarshal(s: string): IBoard {
+export function unmarshal(s: string): Board {
     const tiles = s
         .trim()
         .replace(/ /g, "")

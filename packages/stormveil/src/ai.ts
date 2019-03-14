@@ -1,5 +1,5 @@
 import { allegiance } from "./allegiance";
-import { IBoard, resolve, vec } from "./board";
+import { Board, resolve, vec } from "./board";
 import { Mask } from "./masks";
 import { moves } from "./moves";
 import { opponent } from "./opponent";
@@ -8,7 +8,7 @@ import { Vector } from "./types/vector";
 
 type Move = [Vector, Vector];
 
-function evaluate(board: IBoard, turn: Team): number {
+function evaluate(board: Board, turn: Team): number {
     let sum = 0;
     for (let i = 0; i < board.tiles.length; i += 1) {
         const t = board.tiles[i];
@@ -28,7 +28,7 @@ function evaluate(board: IBoard, turn: Team): number {
     return sum;
 }
 
-function iterate(board: IBoard, turn: Team, fn: (a: Vector, b: Vector) => void): void {
+function iterate(board: Board, turn: Team, fn: (a: Vector, b: Vector) => void): void {
     for (let i = 0; i < board.tiles.length; i += 1) {
         const t = board.tiles[i];
         if (allegiance(t) !== turn) {
@@ -47,7 +47,7 @@ function iterate(board: IBoard, turn: Team, fn: (a: Vector, b: Vector) => void):
     }
 }
 
-function minimax(board: IBoard, turn: Team, depth: number, maximizing: boolean): number {
+function minimax(board: Board, turn: Team, depth: number, maximizing: boolean): number {
     const adversary = opponent(turn);
     if (depth === 0) {
         return evaluate(board, adversary);
@@ -62,7 +62,7 @@ function minimax(board: IBoard, turn: Team, depth: number, maximizing: boolean):
     return result;
 }
 
-function search(board: IBoard, turn: Team, depth: number): Move {
+function search(board: Board, turn: Team, depth: number): Move {
     let result: Move | null = null;
     let r = -Infinity;
     iterate(board, turn, (a, b) => {
@@ -80,6 +80,6 @@ function search(board: IBoard, turn: Team, depth: number): Move {
     return result;
 }
 
-export function best(board: IBoard, turn: Team, depth: number): Move {
+export function best(board: Board, turn: Team, depth: number): Move {
     return search(board, turn, depth);
 }

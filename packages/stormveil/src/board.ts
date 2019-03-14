@@ -5,12 +5,12 @@ import { Team } from "./team";
 import { Tile } from "./tile";
 import { Vector } from "./types/vector";
 
-export interface IBoard {
+export interface Board {
     tiles: Tile[];
     width: number;
 }
 
-function clone(s: IBoard): IBoard {
+function clone(s: Board): Board {
     return { tiles: s.tiles.slice(), width: s.width };
 }
 
@@ -22,7 +22,7 @@ export function key(w: number, x: number, y: number): number {
     return w * y + x;
 }
 
-export function get(s: IBoard, x: number, y: number): Tile {
+export function get(s: Board, x: number, y: number): Tile {
     const t = s.tiles[key(s.width, x, y)];
     if (t === undefined) {
         return Tile.None;
@@ -31,11 +31,11 @@ export function get(s: IBoard, x: number, y: number): Tile {
     return t;
 }
 
-function set(s: IBoard, x: number, y: number, t: Tile): void {
+function set(s: Board, x: number, y: number, t: Tile): void {
     s.tiles[key(s.width, x, y)] = t;
 }
 
-function capture(s: IBoard, x: number, y: number): void {
+function capture(s: Board, x: number, y: number): void {
     set(s, x, y, away(get(s, x, y)));
 }
 
@@ -87,7 +87,7 @@ function inside(a: Tile): Tile {
     }
 }
 
-export function resolve(s: IBoard, [ax, ay]: Vector, [bx, by]: Vector): IBoard {
+export function resolve(s: Board, [ax, ay]: Vector, [bx, by]: Vector): Board {
     const state = clone(s);
     const tile = get(state, ax, ay);
     set(state, ax, ay, away(tile));

@@ -1,10 +1,10 @@
 import { allegiance } from "./allegiance";
-import { IBoard, vec } from "./board";
+import { Board, vec } from "./board";
 import { moves } from "./moves";
 import { Team } from "./team";
 import { Vector } from "./types/vector";
 
-export function moveable(s: IBoard, t: Team): Vector[] {
+export function moveable(s: Board, t: Team): Vector[] {
     const result = [];
     for (let i = 0; i < s.tiles.length; i += 1) {
         if (allegiance(s.tiles[i]) !== t) {

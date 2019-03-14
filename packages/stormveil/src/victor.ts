@@ -1,8 +1,8 @@
-import { IBoard } from "./board";
+import { Board } from "./board";
 import { Team } from "./team";
 import { Tile } from "./tile";
 
-export function victor(s: IBoard): Team | null {
+export function victor(s: Board): Team | null {
     let kf = false;
     let af = false;
     for (let i = 0; i < s.tiles.length; i += 1) {

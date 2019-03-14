@@ -1,4 +1,4 @@
-import { get, IBoard } from "./board";
+import { get, Board } from "./board";
 import { Mask } from "./masks";
 import { offsets } from "./offsets";
 import { Tile } from "./tile";
@@ -17,7 +17,7 @@ function allowed(t: Tile, u: Tile): boolean {
     return false;
 }
 
-export function moves(s: IBoard, [ax, ay]: Vector): Vector[] {
+export function moves(s: Board, [ax, ay]: Vector): Vector[] {
     const m = [];
     const t = get(s, ax, ay);
 

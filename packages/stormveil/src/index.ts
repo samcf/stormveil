@@ -1,5 +1,5 @@
 import { allegiance } from "./allegiance";
-import { IBoard, vec } from "./board";
+import { Board, vec } from "./board";
 import { moveable } from "./moveable";
 import { moves as possibleMoves } from "./moves";
 import { unmarshal } from "./serialization";
@@ -71,6 +71,6 @@ export function moves(state: IState, xy: Vector) {
 }
 
 export function captured(state: IState, t: Team): number {
-    const count = (board: IBoard) => board.tiles.filter((tile: Tile) => allegiance(tile) === t).length;
+    const count = (board: Board) => board.tiles.filter((tile: Tile) => allegiance(tile) === t).length;
     return count(state.initial.board) - count(state.board);
 }
