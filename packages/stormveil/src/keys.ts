@@ -1,7 +1,3 @@
-import { key } from "./board";
-import { State } from "./state";
-import { Vector } from "./vector";
-
 // Key represents a single identity.
 export type Key = number;
 
@@ -24,15 +20,13 @@ export function createNewKeySet(length: number): KeySet {
     };
 }
 
-// deriveNextKeySet returns a new KeySet as a function of the given state and
-// start and stop vectors. This maintains the identity of moving tiles and
-// creates new identities for the tile that was moved from. All identities are
-// guaranteed to be unique within the KeySet.
-export function deriveNextKeySet(state: State, [ ax, ay ]: Vector, [ bx, by ]: Vector): KeySet {
-    const { board: { width }, keys: { last, values } } = state;
+// deriveNextKeySet returns a new KeySet derived from the given KeySet and the
+// indexes at which the key is moving from and to. This function ensures that
+// the next KeySet values remain unique, creating new unique values for indexes
+// which are departed from.
+export function deriveNextKeySet(keySet: KeySet, prev: number, next: number): KeySet {
+    const { last, values } = keySet;
     const latest = last + 1;
-    const prev = key(width, ax, ay);
-    const next = key(width, bx, by);
     const keys = values.slice();
     keys[next] = keys[prev];
     keys[prev] = latest;
