@@ -200,7 +200,7 @@ export default class App extends React.Component<{}, IComponentState> {
                                 </div>
                                 <div>
                                     Stormveil is an implementation of an old Nordic board game called Tafl.<br />
-                                    Visit the <a href="https://en.wikipedia.org/wiki/Tafl_games">Wikiepdia page</a>
+                                    Visit the <a href="https://en.wikipedia.org/wiki/Tafl_games">Wikipedia page</a>
                                     <span> for more information.</span>
                                 </div>
                             </div>
