@@ -8,7 +8,6 @@ Play [Hnefatafl](https://en.wikipedia.org/wiki/Tafl_games) in the browser.
 - Attackers may achieve victory by totally surrounding the defenders.
 
 [Features]
-- Players may start a new game from a variety of different boards.
 - Start a multiplayer game (see: Multiplayer).
 
 [User experience]
