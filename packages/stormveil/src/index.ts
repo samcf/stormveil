@@ -8,6 +8,7 @@ import { Tile } from "./tile";
 
 export { best } from "./ai";
 export { allegiance } from "./allegiance";
+export { Board } from "./board";
 export { moveable } from "./moveable";
 export { moves } from "./moves";
 export { opponent } from "./opponent";
@@ -18,7 +19,12 @@ export { Tile } from "./tile";
 export { victor } from "./victor";
 
 interface IOptions {
-    board: string;
+    board: Board | string;
+    start: Team;
+}
+
+interface StrictOptions {
+    board: Board;
     start: Team;
 }
 
@@ -30,15 +36,36 @@ export interface ITile {
     k: Key;
 }
 
+function unwrap(options: IOptions): StrictOptions {
+    return Object.keys(options).reduce((result, option) => {
+        switch (option) {
+            case "board": {
+                const value = options[option];
+                if (typeof value === "string") {
+                    return { ...result, board: unmarshal(value) };
+                }
+
+                return { ...result, board: value };
+            }
+
+            case "start":
+                return { ...result, start: options[option]};
+
+            default:
+                return result;
+        }
+    }, {} as StrictOptions);
+}
+
 // createNew returns a new State object from the given options configuration.
 export function createNew(options: IOptions): State {
-    const board = unmarshal(options.board);
+    const { board, start } = unwrap(options);
     return {
         board: board,
         history: [],
-        initial: { board: board, turn: options.start },
+        initial: { board: board, turn: start },
         keys: createNewKeySet(board.tiles.length),
-        turn: options.start,
+        turn: start,
     };
 }
 

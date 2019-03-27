@@ -1,14 +1,19 @@
 import css from "classnames";
 import React from "react";
-import { best, captured, createNew, opponent, play, victor, State, Team } from "stormveil";
+import { best, captured, createNew, opponent, play, State, Team, victor } from "stormveil";
 import { hnefatafl } from "stormveil/lib/boards";
+import { BoardVariant, getBoardFromVariant } from "stormveil/lib/variants";
 import styles from "./app.css";
 import Board from "./board";
+import Boards from "./boards";
 import buttonStyles from "./button.css";
 import { Vector } from "./common";
+import Modal from "./modal";
 
-interface IComponentState {
+interface ComponentState {
+    board: BoardVariant;
     game: State;
+    isBoardsVisible: boolean;
     selected: Vector | null;
     started: boolean;
     team: Team;
@@ -22,11 +27,14 @@ function teamName(team: Team): string {
     }
 }
 
-export default class App extends React.Component<{}, IComponentState> {
-    private static defaultState = createNew({ board: hnefatafl, start: Team.Attackers });
-
+export default class App extends React.Component<{}, ComponentState> {
     public state = {
-        game: App.defaultState,
+        board: BoardVariant.Hnefatafl,
+        game: createNew({
+            board: hnefatafl,
+            start: Team.Attackers,
+        }),
+        isBoardsVisible: false,
         selected: null,
         started: false,
         team: Team.Attackers,
@@ -38,15 +46,29 @@ export default class App extends React.Component<{}, IComponentState> {
             return;
         }
 
-        const { team } = this.state;
+        const { board, team } = this.state;
         this.setState({
-            game: createNew({ board: hnefatafl, start: team }),
+            game: createNew({
+                board: getBoardFromVariant(board),
+                start: team,
+            }),
             started: true,
         });
     }
 
+    private onToggleShowBoards = () => {
+        this.setState({ isBoardsVisible: !this.state.isBoardsVisible });
+    }
+
     private onRestart = () => {
-        this.setState({ game: App.defaultState, started: false });
+        const { board, team } = this.state;
+        this.setState({
+            game: createNew({
+                board: getBoardFromVariant(board),
+                start: team,
+            }),
+            started: false,
+        });
     }
 
     private onSelectTeam = (team: Team) => {
@@ -59,6 +81,18 @@ export default class App extends React.Component<{}, IComponentState> {
 
     private onSelectTile = (xy: Vector | null) => {
         this.setState({ selected: xy });
+    }
+
+    private onSelectBoard = (variant: BoardVariant): void => {
+        const { team } = this.state;
+        this.setState({
+            board: variant,
+            game: createNew({
+                board: getBoardFromVariant(variant),
+                start: team,
+            }),
+            isBoardsVisible: false,
+        });
     }
 
     private onMove = (a: Vector, b: Vector) => {
@@ -109,7 +143,7 @@ export default class App extends React.Component<{}, IComponentState> {
     }
 
     public render() {
-        const { game, selected, started, team } = this.state;
+        const { board, game, isBoardsVisible, selected, started, team } = this.state;
         const winner = victor(game.board);
         return (
             <div className={styles.app}>
@@ -137,12 +171,20 @@ export default class App extends React.Component<{}, IComponentState> {
                                     </div>
                                 ))}
                                 <div
+                                    onClick={this.onToggleShowBoards}
+                                    className={css({
+                                        [buttonStyles.button]: true,
+                                        [buttonStyles.team]: true,
+                                    })}>
+                                    B
+                                </div>
+                                <div
+                                    onClick={() => this.onStartNew()}
                                     className={css({
                                         [buttonStyles.button]: true,
                                         [buttonStyles.start]: true,
                                         [buttonStyles.disabled]: started,
-                                    })}
-                                    onClick={() => this.onStartNew()}>
+                                    })}>
                                     Start new game
                                 </div>
                             </div>
@@ -190,9 +232,7 @@ export default class App extends React.Component<{}, IComponentState> {
                                 ))}
                             </div>
                         </div>
-                        <div className={styles.rules}>
-
-                        </div>
+                        <div className={styles.rules} />
                         <div className={styles.about}>
                             <div>
                                 <div>
@@ -216,6 +256,11 @@ export default class App extends React.Component<{}, IComponentState> {
                     selected={selected}
                     team={team}
                 />
+                {isBoardsVisible && (
+                    <Modal onHide={this.onToggleShowBoards}>
+                        <Boards onSelect={this.onSelectBoard} selected={board} />
+                    </Modal>
+                )}
             </div>
         );
     }
